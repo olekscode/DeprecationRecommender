@@ -12,9 +12,13 @@ BaselineOfDeprecationRecommender >> baseline: spec [
 		spec
 			baseline: 'Clio'
 			with: [ spec repository: 'github://olekscode/Clio/src' ].
+			
+		spec
+			baseline: 'VisibilityDeductor'
+			with: [ spec repository: 'github://olekscode/VisibilityDeductor/src' ].
 		
 		"Packages"
 		spec 
-			package: 'DeprecationRecommender' with: [ spec requires: #(Clio) ];
+			package: 'DeprecationRecommender' with: [ spec requires: #(Clio VisibilityDeductor) ];
 			package: 'DeprecationRecommender-Tests' with: [ spec requires: #(DeprecationRecommender) ] ].
 ]
