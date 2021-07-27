@@ -94,15 +94,33 @@ DeprecationRecommender >> methodsToDeprecate [
 ]
 
 { #category : #accessing }
+DeprecationRecommender >> newVersionSnapshot [
+
+	^ newVersionSnapshot
+]
+
+{ #category : #accessing }
 DeprecationRecommender >> newVersionSnapshot: anObject [
 
 	newVersionSnapshot := anObject
 ]
 
 { #category : #accessing }
+DeprecationRecommender >> oldVersionSnapshot [
+
+	^ oldVersionSnapshot
+]
+
+{ #category : #accessing }
 DeprecationRecommender >> oldVersionSnapshot: anObject [
 
 	oldVersionSnapshot := anObject
+]
+
+{ #category : #accessing }
+DeprecationRecommender >> projectHistory [
+
+	^ projectHistory
 ]
 
 { #category : #accessing }
