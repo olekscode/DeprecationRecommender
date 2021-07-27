@@ -32,6 +32,24 @@ RefactoringAssumption >> canExplain [
 ]
 
 { #category : #'as yet unclassified' }
+RefactoringAssumption >> candidateReplacements [
+	| addedMethods metric |
+
+	blamedCommit := spy commitThatRemovedMethod: method.
+	
+	addedMethods := blamedCommit
+		ifNotNil: [ blamedCommit addedMethods ]
+		ifNil: [ #() ].
+	
+	metric := AIShinglesSimilarity
+		slidingWindowSize: 2
+		maxEncodingSize: 10.
+	
+	^ addedMethods select: [ :addedMethod |
+		(metric similarityBetween: addedMethod tokens and: method tokens) >= 0.7 ].
+]
+
+{ #category : #'as yet unclassified' }
 RefactoringAssumption >> explanation [
 
 	self subclassResponsibility

@@ -9,6 +9,25 @@ Class {
 	#category : #DeprecationRecommender
 }
 
+{ #category : #'as yet unclassified' }
+DeprecationRecommender >> candidateReplacementsFor: aMethod [
+	| spy blamedCommit addedMethods metric |
+	spy := RefactoringSpy in: projectHistory.
+
+	blamedCommit := spy commitThatRemovedMethod: aMethod.
+	
+	addedMethods := blamedCommit
+		ifNotNil: [ blamedCommit addedMethods ]
+		ifNil: [ #() ].
+	
+	metric := AIShinglesSimilarity
+		slidingWindowSize: 2
+		maxEncodingSize: 10.
+	
+	^ addedMethods select: [ :addedMethod |
+		(metric similarityBetween: addedMethod tokens and: aMethod tokens) >= 0.7 ].
+]
+
 { #category : #'deprecation - recommendation' }
 DeprecationRecommender >> classesToDeprecate [
 	^ self deletedPublicClasses
@@ -68,13 +87,10 @@ DeprecationRecommender >> methodsToDeprecate [
 	deletedClassNames := self classesToDeprecate collect: [ :aClass | aClass name ].
 	
 	^ methods reject: [ :method |
-		deletedClassNames includes: method methodClass name ].
-]
-
-{ #category : #accessing }
-DeprecationRecommender >> newVersionSnapshot [
-
-	^ newVersionSnapshot
+		method isEmpty or: [
+			method isAbstract or: [
+				method selector = 'initialize' or: [
+					deletedClassNames includes: method methodClass name ] ] ] ].
 ]
 
 { #category : #accessing }
@@ -84,25 +100,58 @@ DeprecationRecommender >> newVersionSnapshot: anObject [
 ]
 
 { #category : #accessing }
-DeprecationRecommender >> oldVersionSnapshot [
-
-	^ oldVersionSnapshot
-]
-
-{ #category : #accessing }
 DeprecationRecommender >> oldVersionSnapshot: anObject [
 
 	oldVersionSnapshot := anObject
 ]
 
 { #category : #accessing }
-DeprecationRecommender >> projectHistory [
-
-	^ projectHistory
-]
-
-{ #category : #accessing }
 DeprecationRecommender >> projectHistory: anObject [
 
 	projectHistory := anObject
+]
+
+{ #category : #'as yet unclassified' }
+DeprecationRecommender >> recommendReplacementsFor: aMethod [
+	| candidateReplacements recommendation |
+	
+	({
+		#('^' 'true' '.') asOrderedCollection .
+		#('^' 'false' '.') asOrderedCollection .
+		#('^' 'nil' '.') asOrderedCollection .
+	} includes: aMethod tokens)
+		ifTrue: [ ^ OrderedCollection new ].
+	
+	candidateReplacements := self candidateReplacementsFor: aMethod.
+	
+	^ candidateReplacements collect: [ :replacementMethod |
+		recommendation := ReplacementRecommendation new
+			method: aMethod;
+			yourself.
+		
+		recommendation replacements add: replacementMethod.
+		recommendation ]
+]
+
+{ #category : #'as yet unclassified' }
+DeprecationRecommender >> transactionsFor: aMethod [
+	| spy blamedCommit blamedCommitIndex windowSize closestCommits |
+	spy := RefactoringSpy in: projectHistory.
+
+	blamedCommit := spy commitThatRemovedMethod: aMethod.
+	blamedCommitIndex := projectHistory commits indexOf: blamedCommit.
+	
+	windowSize := 10.
+	
+	closestCommits := projectHistory commits
+		copyFrom: ((blamedCommitIndex - windowSize) max: 1)
+		to: ((blamedCommitIndex + windowSize) min: projectHistory commits size).
+	
+	^ (closestCommits flatCollect: [ :commit |
+		commit modifiedMethods select: [ :modification |
+			(modification oldDefinition methodCalls
+				anySatisfy: [ :call | call selector = aMethod selector ]) and: [ 
+					modification newDefinition methodCalls
+						noneSatisfy: [ :call | call selector = aMethod selector ] ] ] ])
+
 ]

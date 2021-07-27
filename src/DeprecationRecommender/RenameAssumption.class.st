@@ -16,11 +16,17 @@ RenameAssumption >> explanation [
 { #category : #testing }
 RenameAssumption >> tryToExplain [
 
+	| metric |
+
 	blamedCommit := spy commitThatRemovedMethod: method.
 	blamedCommit ifNil: [ ^ self ].
+	
+	metric := AIShinglesSimilarity
+		slidingWindowSize: 2
+		maxEncodingSize: 10.
 	
 	potentialReplacements := blamedCommit addedMethods select: [ :addedMethod |
 		addedMethod className = method className and: [ 
 			addedMethod selector ~= method selector and: [
-				addedMethod sourceCode lines copyWithoutFirst = method sourceCode lines copyWithoutFirst ] ] ].
+				(metric similarityBetween: addedMethod tokens and: method tokens) >= 0.9 ] ] ].
 ]
