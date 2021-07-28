@@ -10,6 +10,15 @@ DepRefactoringChain >> addedMethod [
 	^ self last addedMethod
 ]
 
+{ #category : #copying }
+DepRefactoringChain >> copyWithAll: aCollection [
+
+	| newCollection |
+	newCollection := self copy.
+	newCollection addAll: aCollection.
+	^ newCollection
+]
+
 { #category : #printing }
 DepRefactoringChain >> printOn: aStream [
 

@@ -1,20 +1,20 @@
 Class {
 	#name : #DepRefactoringDetector,
-	#superclass : #Object,
-	#instVars : [
-		'projectHistory',
-		'newVersionSnapshot'
-	],
+	#superclass : #DepRecommendationStrategy,
 	#category : #'DeprecationRecommender-Controllers'
 }
 
 { #category : #'history search' }
 DepRefactoringDetector >> candidateReplacementsFor: aMethod in: aCollectionOfCommits [
 
-	| addedMethods metric threshold |
+	| candidateReplacements metric threshold |
 	
-	addedMethods := aCollectionOfCommits flatCollect: [ :commit |
-		commit addedMethods ].
+	candidateReplacements := aCollectionOfCommits flatCollect: [ :commit |
+		commit addedMethods collect: [ :each |
+			DepCandidateReplacement new
+				method: each;
+				commit: commit;
+				yourself ] ].
 	
 	metric := AIShinglesSimilarity
 		slidingWindowSize: 2
@@ -22,35 +22,20 @@ DepRefactoringDetector >> candidateReplacementsFor: aMethod in: aCollectionOfCom
 		
 	threshold := 0.7.
 	
-	^ addedMethods select: [ :addedMethod |
-		(metric similarityBetween: addedMethod tokens and: aMethod tokens) >= threshold ].
-]
-
-{ #category : #'history search' }
-DepRefactoringDetector >> commitThatRemovedMethod: aMethod [
-
-	| blamer |
-	blamer := DepCommitBlamer in: projectHistory.
-	^ blamer commitThatRemovedMethod: aMethod.
-]
-
-{ #category : #'history search' }
-DepRefactoringDetector >> commitsSurrounding: aCommit [
-
-	| commitIndex windowSize |
-	commitIndex := projectHistory commits indexOf: aCommit.
+	candidateReplacements do: [ :replacement |
+		replacement similarity: (
+			metric
+				similarityBetween: replacement method tokens
+				and: aMethod tokens) ].
 	
-	windowSize := 10.
-	
-	^ projectHistory commits
-		copyFrom: commitIndex
-		to: ((commitIndex + windowSize) min: projectHistory commits size).
+	^ candidateReplacements select: [ :replacement |
+		replacement similarity >= threshold ].
 ]
 
 { #category : #'as yet unclassified' }
 DepRefactoringDetector >> detectRefactoringsThatRemoved: aMethod [
 
-	| blamedCommit surroundingCommits candidateReplacements refactorings refactoringChains |
+	| blamedCommit surroundingCommits candidateReplacements refactorings refactoringChains validChains |
 	
 	blamedCommit := self commitThatRemovedMethod: aMethod.
 	blamedCommit ifNil: [ ^ OrderedCollection new ].
@@ -60,41 +45,32 @@ DepRefactoringDetector >> detectRefactoringsThatRemoved: aMethod [
 	
 	refactorings := candidateReplacements collect: [ :replacement |
 		self refactoringsList
-			detect: [ :each | each canExplainReplacementOf: aMethod with: replacement ]
+			detect: [ :each | each canExplainReplacementOf: aMethod with: replacement method ]
 			ifFound: [ :aRefactoringClass |
 				aRefactoringClass new
 					removedMethod: aMethod;
-					addedMethod: replacement;
+					addedMethod: replacement method;
+					removalCommit: blamedCommit;
+					additionCommit: replacement commit;
+					similarity: replacement similarity;
+					commitDistance: (projectHistory commits indexOf: replacement commit) -
+						(projectHistory commits indexOf:blamedCommit);
 					yourself ]
 			ifNone: [ nil ] ].
 	
 	refactorings := refactorings reject: [ :each | each isNil ].	
 	refactoringChains := refactorings collect: [ :each | DepRefactoringChain with: each ].
 	
+	validChains := OrderedCollection new.
+	
 	refactoringChains do: [ :chain |
 		(self isInNewVersion: chain addedMethod)
-			ifFalse: [ chain addAll: (self detectRefactoringsThatRemoved: chain addedMethod) ] ].
+			ifTrue: [ validChains add: chain ]
+			ifFalse: [ 
+				(self detectRefactoringsThatRemoved: chain addedMethod) do: [ :chainExtension |
+					validChains add: (chain copyWithAll: chainExtension) ] ] ].
 		
-	^ refactoringChains select: [ :chain | self isInNewVersion: chain addedMethod ].
-]
-
-{ #category : #testing }
-DepRefactoringDetector >> isInNewVersion: aMethod [
-
-	^ newVersionSnapshot methods anySatisfy: [ :method |
-		method signature = aMethod signature ].
-]
-
-{ #category : #accessing }
-DepRefactoringDetector >> newVersionSnapshot: anObject [
-
-	newVersionSnapshot := anObject
-]
-
-{ #category : #accessing }
-DepRefactoringDetector >> projectHistory: anObject [
-
-	projectHistory := anObject
+	^ validChains
 ]
 
 { #category : #accessing }
@@ -102,6 +78,9 @@ DepRefactoringDetector >> refactoringsList [
 
 	^ { 
 		DepRenameRefactoring .
-		DepChangeSignatureRefactoring
+		DepChangeSignatureRefactoring .
+		DepMoveRefactoring .
+		DepMoveRenameRefactoring .
+		DepMoveChangeSignatureRefactoring 
 	}
 ]

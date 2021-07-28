@@ -1,16 +1,16 @@
 Class {
-	#name : #DeprecationRecommender,
+	#name : #DepRecommender,
 	#superclass : #Object,
 	#instVars : [
 		'oldVersionSnapshot',
 		'newVersionSnapshot',
 		'projectHistory'
 	],
-	#category : #DeprecationRecommender
+	#category : #'DeprecationRecommender-Controllers'
 }
 
 { #category : #'as yet unclassified' }
-DeprecationRecommender >> candidateReplacementsFor: aMethod [
+DepRecommender >> candidateReplacementsFor: aMethod [
 	| spy blamedCommit addedMethods metric |
 	spy := DepCommitBlamer in: projectHistory.
 
@@ -29,12 +29,12 @@ DeprecationRecommender >> candidateReplacementsFor: aMethod [
 ]
 
 { #category : #'deprecation - recommendation' }
-DeprecationRecommender >> classesToDeprecate [
+DepRecommender >> classesToDeprecate [
 	^ self deletedPublicClasses
 ]
 
 { #category : #private }
-DeprecationRecommender >> deletedPublicClasses [
+DepRecommender >> deletedPublicClasses [
 	| oldPublicClasses newPublicClasses oldClassDictionary oldNames newNames deletedNames |
 	
 	oldPublicClasses := oldVersionSnapshot classes select: [ :each |
@@ -58,7 +58,7 @@ DeprecationRecommender >> deletedPublicClasses [
 ]
 
 { #category : #private }
-DeprecationRecommender >> deletedPublicMethods [
+DepRecommender >> deletedPublicMethods [
 	| oldPublicMethods newPublicMethods oldMethodDictionary oldSignatures newSignatures deletedSignatures |
 	
 	oldPublicMethods := oldVersionSnapshot methods select: [ :each |
@@ -80,7 +80,7 @@ DeprecationRecommender >> deletedPublicMethods [
 ]
 
 { #category : #'deprecation - recommendation' }
-DeprecationRecommender >> methodsToDeprecate [
+DepRecommender >> methodsToDeprecate [
 	| methods deletedClassNames |
 	
 	methods := self deletedPublicMethods.
@@ -94,43 +94,43 @@ DeprecationRecommender >> methodsToDeprecate [
 ]
 
 { #category : #accessing }
-DeprecationRecommender >> newVersionSnapshot [
+DepRecommender >> newVersionSnapshot [
 
 	^ newVersionSnapshot
 ]
 
 { #category : #accessing }
-DeprecationRecommender >> newVersionSnapshot: anObject [
+DepRecommender >> newVersionSnapshot: anObject [
 
 	newVersionSnapshot := anObject
 ]
 
 { #category : #accessing }
-DeprecationRecommender >> oldVersionSnapshot [
+DepRecommender >> oldVersionSnapshot [
 
 	^ oldVersionSnapshot
 ]
 
 { #category : #accessing }
-DeprecationRecommender >> oldVersionSnapshot: anObject [
+DepRecommender >> oldVersionSnapshot: anObject [
 
 	oldVersionSnapshot := anObject
 ]
 
 { #category : #accessing }
-DeprecationRecommender >> projectHistory [
+DepRecommender >> projectHistory [
 
 	^ projectHistory
 ]
 
 { #category : #accessing }
-DeprecationRecommender >> projectHistory: anObject [
+DepRecommender >> projectHistory: anObject [
 
 	projectHistory := anObject
 ]
 
 { #category : #'as yet unclassified' }
-DeprecationRecommender >> recommendReplacementsFor: aMethod [
+DepRecommender >> recommendReplacementsFor: aMethod [
 	| candidateReplacements recommendation |
 	
 	({
@@ -152,7 +152,7 @@ DeprecationRecommender >> recommendReplacementsFor: aMethod [
 ]
 
 { #category : #'as yet unclassified' }
-DeprecationRecommender >> transactionsFor: aMethod [
+DepRecommender >> transactionsFor: aMethod [
 	| spy blamedCommit blamedCommitIndex windowSize closestCommits |
 	spy := DepCommitBlamer in: projectHistory.
 

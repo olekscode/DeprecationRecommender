@@ -1,25 +1,25 @@
 Class {
-	#name : #DepChangeSignatureRefactoring,
+	#name : #DepMoveRenameRefactoring,
 	#superclass : #DepRefactoring,
 	#category : #'DeprecationRecommender-Models'
 }
 
 { #category : #testing }
-DepChangeSignatureRefactoring class >> canExplainReplacementOf: aMethod with: aReplacementMethod [
+DepMoveRenameRefactoring class >> canExplainReplacementOf: aMethod with: aReplacementMethod [
 
-	^ aReplacementMethod methodClass = aMethod methodClass
+	^ aReplacementMethod methodClass ~= aMethod methodClass
 		and: [ aReplacementMethod selector ~= aMethod selector
-			and: [ aReplacementMethod numberOfArguments ~= aMethod numberOfArguments ] ]
+			and: [ aReplacementMethod numberOfArguments = aMethod numberOfArguments ] ]
 ]
 
 { #category : #accessing }
-DepChangeSignatureRefactoring >> name [
+DepMoveRenameRefactoring >> name [
 	
-	^ 'ChangeSignature'
+	^ 'MoveRenameMethod'
 ]
 
 { #category : #printing }
-DepChangeSignatureRefactoring >> printOn: aStream [
+DepMoveRenameRefactoring >> printOn: aStream [
 
 	aStream
 		nextPutAll: DepMoveRefactoring new name;
@@ -28,7 +28,7 @@ DepChangeSignatureRefactoring >> printOn: aStream [
 		nextPutAll: '->';
 		nextPutAll: addedMethod fullClassName;
 		nextPutAll: ') + ';
-		nextPutAll: DepChangeSignatureRefactoring new name;
+		nextPutAll: DepRenameRefactoring new name;
 		nextPut: $(;
 		nextPutAll: removedMethod name;
 		nextPutAll: '->';
