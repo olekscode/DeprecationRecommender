@@ -4,6 +4,8 @@ Class {
 	#instVars : [
 		'oldMethod',
 		'newMethod',
+		'removedMethodCalls',
+		'addedMethodCalls',
 		'commit',
 		'commitDistance'
 	],
@@ -13,7 +15,13 @@ Class {
 { #category : #'as yet unclassified' }
 DepMethodChange >> addedMethodCalls [
 	
-	^ newMethod methodCalls asSet difference: (oldMethod methodCalls asSet)
+	^ addedMethodCalls
+]
+
+{ #category : #accessing }
+DepMethodChange >> addedMethodCalls: anObject [
+
+	addedMethodCalls := anObject
 ]
 
 { #category : #converting }
@@ -87,5 +95,11 @@ DepMethodChange >> oldMethod: anObject [
 { #category : #'as yet unclassified' }
 DepMethodChange >> removedMethodCalls [
 	
-	^ oldMethod methodCalls asSet difference: (newMethod methodCalls asSet)
+	^ removedMethodCalls
+]
+
+{ #category : #accessing }
+DepMethodChange >> removedMethodCalls: anObject [
+
+	removedMethodCalls := anObject
 ]

@@ -5,9 +5,32 @@ Class {
 }
 
 { #category : #'as yet unclassified' }
+DepMethodCallMiner >> extractRelevantMethodCallsFrom: aMethodChange [
+	"Removed method call is relevant if it was present in the old version of a library. Added method call is relevant if it is present in the new version"
+	
+	| oldMethodCalls newMethodCalls removedMethodCalls addedMethodCalls |
+	
+	oldMethodCalls := aMethodChange oldMethod methodCalls asSet.
+	newMethodCalls := aMethodChange newMethod methodCalls asSet.
+	
+	removedMethodCalls := oldMethodCalls difference: newMethodCalls.		
+	addedMethodCalls := newMethodCalls difference: oldMethodCalls.
+	
+	removedMethodCalls := removedMethodCalls select: [ :methodCall |
+		oldVersionSelectors includes: methodCall selector ].
+	
+	addedMethodCalls := addedMethodCalls select: [ :methodCall |
+		newVersionSelectors includes: methodCall selector ].
+	
+	aMethodChange
+		removedMethodCalls: removedMethodCalls;
+		addedMethodCalls: addedMethodCalls.
+]
+
+{ #category : #'as yet unclassified' }
 DepMethodCallMiner >> methodChangesThatRemoveCallsTo: aMethod [
 
-	| blamedCommit surroundingCommits methodChanges |
+	| blamedCommit surroundingCommits methodChanges removedMethodCalls addedMethodCalls |
 	
 	blamedCommit := self commitThatRemovedMethod: aMethod.
 	blamedCommit ifNil: [ ^ OrderedCollection new ].
@@ -21,10 +44,14 @@ DepMethodCallMiner >> methodChangesThatRemoveCallsTo: aMethod [
 				newMethod: modification newDefinition;
 				commit: commit;
 				yourself ] ].
+		
+	methodChanges do: [ :methodChange |
+		self extractRelevantMethodCallsFrom: methodChange ].
 	
 	^ methodChanges select: [ :each |
-		each removedMethodCalls anySatisfy: [ :methodCall |
-			methodCall selector = aMethod selector ] ].
+		each addedMethodCalls isNotEmpty and: [
+			each removedMethodCalls anySatisfy: [ :methodCall |
+				methodCall selector = aMethod selector ] ] ].
 ]
 
 { #category : #accessing }

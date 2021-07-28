@@ -3,7 +3,10 @@ Class {
 	#superclass : #Object,
 	#instVars : [
 		'projectHistory',
-		'newVersionSnapshot'
+		'oldVersionSnapshot',
+		'newVersionSnapshot',
+		'newVersionSelectors',
+		'oldVersionSelectors'
 	],
 	#category : #'DeprecationRecommender-Controllers'
 }
@@ -39,7 +42,15 @@ DepRecommendationStrategy >> isInNewVersion: aMethod [
 { #category : #accessing }
 DepRecommendationStrategy >> newVersionSnapshot: anObject [
 
-	newVersionSnapshot := anObject
+	newVersionSnapshot := anObject.
+	newVersionSelectors := newVersionSnapshot selectors.
+]
+
+{ #category : #accessing }
+DepRecommendationStrategy >> oldVersionSnapshot: anObject [
+
+	oldVersionSnapshot := anObject.
+	oldVersionSelectors := oldVersionSnapshot selectors.
 ]
 
 { #category : #accessing }
