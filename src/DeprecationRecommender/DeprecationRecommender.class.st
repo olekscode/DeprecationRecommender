@@ -12,7 +12,7 @@ Class {
 { #category : #'as yet unclassified' }
 DeprecationRecommender >> candidateReplacementsFor: aMethod [
 	| spy blamedCommit addedMethods metric |
-	spy := RefactoringSpy in: projectHistory.
+	spy := DepCommitBlamer in: projectHistory.
 
 	blamedCommit := spy commitThatRemovedMethod: aMethod.
 	
@@ -154,7 +154,7 @@ DeprecationRecommender >> recommendReplacementsFor: aMethod [
 { #category : #'as yet unclassified' }
 DeprecationRecommender >> transactionsFor: aMethod [
 	| spy blamedCommit blamedCommitIndex windowSize closestCommits |
-	spy := RefactoringSpy in: projectHistory.
+	spy := DepCommitBlamer in: projectHistory.
 
 	blamedCommit := spy commitThatRemovedMethod: aMethod.
 	blamedCommitIndex := projectHistory commits indexOf: blamedCommit.
