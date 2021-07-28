@@ -27,7 +27,7 @@ DepMethodChange >> asItemset [
 			markAsAdded;
 			yourself ].
 		
-	removedCalls := self addedMethodCalls collect: [ :each |
+	removedCalls := self removedMethodCalls collect: [ :each |
 		DepMethodCall new
 			selector: each selector;
 			markAsRemoved;
