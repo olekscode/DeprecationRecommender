@@ -18,11 +18,15 @@ BaselineOfDeprecationRecommender >> baseline: spec [
 			with: [ spec repository: 'github://olekscode/VisibilityDeductor/src' ].
 			
 		spec
+			baseline: 'PharoCodeTokenizer'
+			with: [ spec repository: 'github://olekscode/PharoCodeTokenizer/src' ].
+			
+		spec
 			baseline: 'APriori'
 			with: [ spec repository: 'github://pharo-ai/APriori/src' ].
 		
 		"Packages"
 		spec 
-			package: 'DeprecationRecommender' with: [ spec requires: #(Clio VisibilityDeductor APriori) ];
+			package: 'DeprecationRecommender' with: [ spec requires: #(Clio VisibilityDeductor PharoCodeTokenizer APriori) ];
 			package: 'DeprecationRecommender-Tests' with: [ spec requires: #(DeprecationRecommender) ] ].
 ]

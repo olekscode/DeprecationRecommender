@@ -67,8 +67,10 @@ DepRecommender >> deletedPublicMethods [
 	newPublicMethods := newVersionSnapshot methods select: [ :each |
 		VisibilityDeductor new isMethodPublic: each ].
 	
-	oldMethodDictionary := (oldPublicMethods collect: [ :each |
-		each signature -> each ]) asDictionary.
+	oldMethodDictionary := Dictionary new.
+	
+	oldPublicMethods do: [ :each |
+		oldMethodDictionary at: each signature put: each ].
 	
 	oldSignatures := oldMethodDictionary keys asSet.
 	newSignatures := (newPublicMethods collect: [ :each | each signature ]) asSet.
