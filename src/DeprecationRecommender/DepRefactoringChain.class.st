@@ -10,6 +10,12 @@ DepRefactoringChain >> addedMethod [
 	^ self last addedMethod
 ]
 
+{ #category : #converting }
+DepRefactoringChain >> asDictionary [
+	
+	^ (self collect: [ :each | each asDictionary ]) asArray
+]
+
 { #category : #copying }
 DepRefactoringChain >> copyWithAll: aCollection [
 

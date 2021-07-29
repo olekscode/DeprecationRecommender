@@ -151,7 +151,7 @@ DepRecommender >> recommendReplacementsFor: aMethod [
 	refactorings := strategy1 detectRefactoringsThatRemoved: aMethod.
 	methodCallReplacements := strategy2 mineFrequentMethodCallReplacementsFor: aMethod.
 		
-	^ DepMethodRecommendation new
+	^ DepRecommendation new
 		method: aMethod;
 		refactorings: refactorings;
 		frequentMethodCallReplacements: methodCallReplacements;

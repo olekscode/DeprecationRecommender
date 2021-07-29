@@ -42,6 +42,20 @@ DepRefactoring >> additionCommit: anObject [
 	additionCommit := anObject
 ]
 
+{ #category : #converting }
+DepRefactoring >> asDictionary [
+
+	^ { 
+		'name' -> self name .
+		'removedMethod' -> removedMethod asDictionary .
+		'addedMethod' -> addedMethod asDictionary .
+		'similarity' -> similarity .
+		'removalCommit' -> removalCommit asDictionary .
+		'additionCommit' -> additionCommit asDictionary .
+		'commitDistance' -> commitDistance
+	} asDictionary
+]
+
 { #category : #accessing }
 DepRefactoring >> commitDistance [
 

@@ -25,6 +25,20 @@ DepMethodCallReplacement >> addedSelectors: anObject [
 	addedSelectors := anObject
 ]
 
+{ #category : #converting }
+DepMethodCallReplacement >> asDictionary [
+
+	^ { 
+		'removedSelectors' -> removedSelectors asArray .
+		'addedSelectors' -> addedSelectors asArray .
+		'methodChanges' -> (methodChanges collect: [ :each | each asDictionary ]) asArray .
+		'count' -> count .
+		'support' -> support .
+		'confidence' -> confidence .
+		'lift' -> lift
+	} asDictionary
+]
+
 { #category : #accessing }
 DepMethodCallReplacement >> confidence [
 

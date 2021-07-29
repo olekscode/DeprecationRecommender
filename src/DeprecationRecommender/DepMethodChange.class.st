@@ -25,6 +25,19 @@ DepMethodChange >> addedMethodCalls: anObject [
 ]
 
 { #category : #converting }
+DepMethodChange >> asDictionary [
+
+	^ { 
+		'oldMethod' -> oldMethod asDictionary .
+		'newMethod' -> newMethod asDictionary .
+		'removedMethodCalls' -> (removedMethodCalls collect: [ :each | each asDictionary ]) asArray .
+		'addedMethodCalls' -> (addedMethodCalls collect: [ :each | each asDictionary ]) asArray .
+		'commit' -> commit asDictionary .
+		'commitDistance' -> commitDistance
+	} asDictionary
+]
+
+{ #category : #converting }
 DepMethodChange >> asItemset [
 
 	| addedCalls removedCalls |
