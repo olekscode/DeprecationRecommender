@@ -156,26 +156,3 @@ DepRecommender >> recommendReplacementsFor: aMethod [
 		replacements: (refactorings collect: [ :each | each addedMethod ]) asSet;
 		yourself.
 ]
-
-{ #category : #'as yet unclassified' }
-DepRecommender >> transactionsFor: aMethod [
-	| spy blamedCommit blamedCommitIndex windowSize closestCommits |
-	spy := DepCommitBlamer in: projectHistory.
-
-	blamedCommit := spy commitThatRemovedMethod: aMethod.
-	blamedCommitIndex := projectHistory commits indexOf: blamedCommit.
-	
-	windowSize := 10.
-	
-	closestCommits := projectHistory commits
-		copyFrom: ((blamedCommitIndex - windowSize) max: 1)
-		to: ((blamedCommitIndex + windowSize) min: projectHistory commits size).
-	
-	^ (closestCommits flatCollect: [ :commit |
-		commit modifiedMethods select: [ :modification |
-			(modification oldDefinition methodCalls
-				anySatisfy: [ :call | call selector = aMethod selector ]) and: [ 
-					modification newDefinition methodCalls
-						noneSatisfy: [ :call | call selector = aMethod selector ] ] ] ])
-
-]

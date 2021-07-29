@@ -24,5 +24,5 @@ BaselineOfDeprecationRecommender >> baseline: spec [
 		"Packages"
 		spec 
 			package: 'DeprecationRecommender' with: [ spec requires: #(Clio VisibilityDeductor APriori) ];
-			package: 'DeprecationRecommender-Tests' with: [ spec requires: #(#DepRecommender) ] ].
+			package: 'DeprecationRecommender-Tests' with: [ spec requires: #(DeprecationRecommender) ] ].
 ]
