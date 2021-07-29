@@ -4,6 +4,16 @@ Class {
 	#category : #'DeprecationRecommender-Controllers'
 }
 
+{ #category : #testing }
+DepRefactoringDetector >> canBeAppliedTo: aMethod [
+
+	^ ({
+		#('^' 'true' '.') asOrderedCollection .
+		#('^' 'false' '.') asOrderedCollection .
+		#('^' 'nil' '.') asOrderedCollection .
+	} includes: aMethod tokens) not.
+]
+
 { #category : #'history search' }
 DepRefactoringDetector >> candidateReplacementsFor: aMethod in: aCollectionOfCommits [
 
@@ -36,6 +46,8 @@ DepRefactoringDetector >> candidateReplacementsFor: aMethod in: aCollectionOfCom
 DepRefactoringDetector >> detectRefactoringsThatRemoved: aMethod [
 
 	| blamedCommit surroundingCommits candidateReplacements refactorings refactoringChains validChains |
+	
+	(self canBeAppliedTo: aMethod) ifFalse: [ ^ OrderedCollection new ].
 	
 	blamedCommit := self commitThatRemovedMethod: aMethod.
 	blamedCommit ifNil: [ ^ OrderedCollection new ].

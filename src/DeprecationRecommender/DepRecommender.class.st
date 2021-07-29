@@ -131,24 +131,30 @@ DepRecommender >> projectHistory: anObject [
 
 { #category : #'as yet unclassified' }
 DepRecommender >> recommendReplacementsFor: aMethod [
-	| candidateReplacements recommendation |
 	
-	({
-		#('^' 'true' '.') asOrderedCollection .
-		#('^' 'false' '.') asOrderedCollection .
-		#('^' 'nil' '.') asOrderedCollection .
-	} includes: aMethod tokens)
-		ifTrue: [ ^ OrderedCollection new ].
+	| strategy1 strategy2 refactorings methodCallReplacements |
 	
-	candidateReplacements := self candidateReplacementsFor: aMethod.
-	
-	^ candidateReplacements collect: [ :replacementMethod |
-		recommendation := ReplacementRecommendation new
-			method: aMethod;
-			yourself.
+	strategy1 := DepRefactoringDetector new
+		projectHistory: projectHistory;
+		oldVersionSnapshot: oldVersionSnapshot;
+		newVersionSnapshot: newVersionSnapshot;
+		yourself.
 		
-		recommendation replacements add: replacementMethod.
-		recommendation ]
+	strategy2 := DepMethodCallMiner new
+		projectHistory: projectHistory;
+		oldVersionSnapshot: oldVersionSnapshot;
+		newVersionSnapshot: newVersionSnapshot;
+		yourself.
+		
+	refactorings := strategy1 detectRefactoringsThatRemoved: aMethod.
+	methodCallReplacements := strategy2 mineFrequentMethodCallReplacementsFor: aMethod.
+		
+	^ DepMethodRecommendation new
+		method: aMethod;
+		refactorings: refactorings;
+		frequentMethodCallReplacements: methodCallReplacements;
+		replacements: (refactorings collect: [ :each | each addedMethod ]) asSet;
+		yourself.
 ]
 
 { #category : #'as yet unclassified' }

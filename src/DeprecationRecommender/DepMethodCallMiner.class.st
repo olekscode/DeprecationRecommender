@@ -8,13 +8,19 @@ Class {
 DepMethodCallMiner >> extractRelevantMethodCallsFrom: aMethodChange [
 	"Removed method call is relevant if it was present in the old version of a library. Added method call is relevant if it is present in the new version"
 	
-	| oldMethodCalls newMethodCalls removedMethodCalls addedMethodCalls |
+	| oldMethodCalls newMethodCalls oldSelectors newSelectors removedSelectors addedSelectors removedMethodCalls addedMethodCalls |
 	
 	oldMethodCalls := aMethodChange oldMethod methodCalls asSet.
 	newMethodCalls := aMethodChange newMethod methodCalls asSet.
 	
-	removedMethodCalls := oldMethodCalls difference: newMethodCalls.		
-	addedMethodCalls := newMethodCalls difference: oldMethodCalls.
+	oldSelectors := oldMethodCalls collect: [ :each | each selector ].
+	newSelectors := newMethodCalls collect: [ :each | each selector ].
+	
+	removedSelectors := oldSelectors difference: newSelectors.		
+	addedSelectors := newSelectors difference: oldSelectors.
+	
+	removedMethodCalls := oldMethodCalls select: [ :each | removedSelectors includes: each selector ].		
+	addedMethodCalls := newMethodCalls select: [ :each | addedSelectors includes: each selector ].
 	
 	removedMethodCalls := removedMethodCalls select: [ :methodCall |
 		oldVersionSelectors includes: methodCall selector ].
