@@ -22,11 +22,15 @@ BaselineOfDeprecationRecommender >> baseline: spec [
 			with: [ spec repository: 'github://olekscode/PharoCodeTokenizer/src' ].
 			
 		spec
+			baseline: 'AIShinglesSimilarity'
+			with: [ spec repository: 'github://pharo-ai/shingles-similarity/src' ].
+			
+		spec
 			baseline: 'APriori'
 			with: [ spec repository: 'github://pharo-ai/APriori/src' ].
 		
 		"Packages"
 		spec 
-			package: 'DeprecationRecommender' with: [ spec requires: #(Clio VisibilityDeductor PharoCodeTokenizer APriori) ];
+			package: 'DeprecationRecommender' with: [ spec requires: #(Clio VisibilityDeductor PharoCodeTokenizer AIShinglesSimilarity APriori) ];
 			package: 'DeprecationRecommender-Tests' with: [ spec requires: #(DeprecationRecommender) ] ].
 ]
