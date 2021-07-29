@@ -12,6 +12,27 @@ Class {
 	#category : #'DeprecationRecommender-Models'
 }
 
+{ #category : #'instance creation' }
+DepMethodChange class >> fromDictionary: aDictionary [
+
+	| removedMethodCalls addedMethodCalls |
+	
+	removedMethodCalls := ((aDictionary at: 'removedMethodCalls') collect: [ :each |
+		ClioMethodCall fromDictionary: each ]) asOrderedCollection.
+	
+	addedMethodCalls := ((aDictionary at: 'addedMethodCalls') collect: [ :each |
+		ClioMethodCall fromDictionary: each ]) asOrderedCollection.
+	
+	^ self new 
+		oldMethod: (ClioMethod fromDictionary: (aDictionary at: 'oldMethod'));
+		newMethod: (ClioMethod fromDictionary: (aDictionary at: 'newMethod'));
+		removedMethodCalls: removedMethodCalls;
+		addedMethodCalls: addedMethodCalls;
+		commit: (ClioCommit fromDictionary: (aDictionary at: 'commit'));
+		commitDistance: (aDictionary at: 'commitDistance');
+		yourself.
+]
+
 { #category : #'as yet unclassified' }
 DepMethodChange >> addedMethodCalls [
 	

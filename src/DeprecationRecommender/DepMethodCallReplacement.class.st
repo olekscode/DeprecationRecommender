@@ -13,6 +13,20 @@ Class {
 	#category : #'DeprecationRecommender-Models'
 }
 
+{ #category : #'instance creation' }
+DepMethodCallReplacement class >> fromDictionary: aDictionary [
+
+	^ self new
+		removedSelectors: (aDictionary at: 'removedSelectors') asOrderedCollection;
+		addedSelectors: (aDictionary at: 'addedSelectors') asOrderedCollection;
+		methodChanges: ((aDictionary at: 'methodChanges') collect: [ :each | DepMethodChange fromDictionary: each ]) asOrderedCollection;
+		count: (aDictionary at: 'count');
+		support: (aDictionary at: 'support');
+		confidence: (aDictionary at: 'confidence');
+		lift: (aDictionary at: 'lift');
+		yourself.
+]
+
 { #category : #accessing }
 DepMethodCallReplacement >> addedSelectors [
 

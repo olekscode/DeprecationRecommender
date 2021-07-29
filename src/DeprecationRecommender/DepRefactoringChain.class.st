@@ -4,6 +4,12 @@ Class {
 	#category : #'DeprecationRecommender-Models'
 }
 
+{ #category : #'instance creation' }
+DepRefactoringChain class >> fromArray: anArray [
+
+	^ self withAll: (anArray collect: [ :each | DepRefactoring fromDictionary: each ])
+]
+
 { #category : #'as yet unclassified' }
 DepRefactoringChain >> addedMethod [
 	
@@ -11,7 +17,7 @@ DepRefactoringChain >> addedMethod [
 ]
 
 { #category : #converting }
-DepRefactoringChain >> asDictionary [
+DepRefactoringChain >> asArray [
 	
 	^ (self collect: [ :each | each asDictionary ]) asArray
 ]

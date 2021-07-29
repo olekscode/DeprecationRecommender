@@ -18,6 +18,23 @@ DepRefactoring class >> canExplainReplacementOf: aMethod with: aReplacementMetho
 	self subclassResponsibility
 ]
 
+{ #category : #'instance creation' }
+DepRefactoring class >> fromDictionary: aDictionary [
+	
+	| refactoringClass |
+	refactoringClass := self allSubclasses detect: [ :each | each new name = (aDictionary at: 'name') ].
+	
+	^ refactoringClass new
+		removedMethod: (ClioMethod fromDictionary: (aDictionary at: 'removedMethod'));
+		addedMethod: (ClioMethod fromDictionary: (aDictionary at: 'addedMethod'));
+		similarity: (aDictionary at: 'similarity');
+		removalCommit: (ClioCommit fromDictionary: (aDictionary at: 'removalCommit'));
+		additionCommit: (ClioCommit fromDictionary: (aDictionary at: 'additionCommit'));
+		commitDistance: (aDictionary at: 'commitDistance');
+		yourself.
+
+]
+
 { #category : #accessing }
 DepRefactoring >> addedMethod [
 

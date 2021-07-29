@@ -4,6 +4,17 @@ Class {
 	#category : #'DeprecationRecommender-Models'
 }
 
+{ #category : #'as yet unclassified' }
+DepRecommendations class >> readFromJsonFile: aFileReference [
+
+	| array |
+	
+	array := aFileReference readStreamDo: [ :stream |
+		STONJSON fromStream: stream ].
+	
+	^ self withAll: (array collect: [ :each | DepRecommendation fromDictionary: each ]).
+]
+
 { #category : #converting }
 DepRecommendations >> saveToJsonFile: aFileReference [
 
