@@ -2,12 +2,10 @@ Class {
 	#name : #DepMethodChange,
 	#superclass : #Object,
 	#instVars : [
-		'oldMethod',
-		'newMethod',
+		'signature',
+		'commitId',
 		'removedMethodCalls',
-		'addedMethodCalls',
-		'commit',
-		'commitDistance'
+		'addedMethodCalls'
 	],
 	#category : #'DeprecationRecommender-Models'
 }
@@ -23,13 +21,11 @@ DepMethodChange class >> fromDictionary: aDictionary [
 	addedMethodCalls := ((aDictionary at: 'addedMethodCalls') collect: [ :each |
 		ClioMethodCall fromDictionary: each ]) asOrderedCollection.
 	
-	^ self new 
-		oldMethod: (ClioMethod fromDictionary: (aDictionary at: 'oldMethod'));
-		newMethod: (ClioMethod fromDictionary: (aDictionary at: 'newMethod'));
+	^ self new
+		signature: (aDictionary at: 'signature');
+		commitId: (aDictionary at: 'commitId');
 		removedMethodCalls: removedMethodCalls;
 		addedMethodCalls: addedMethodCalls;
-		commit: (ClioCommit fromDictionary: (aDictionary at: 'commit'));
-		commitDistance: (aDictionary at: 'commitDistance');
 		yourself.
 ]
 
@@ -49,12 +45,10 @@ DepMethodChange >> addedMethodCalls: anObject [
 DepMethodChange >> asDictionary [
 
 	^ { 
-		'oldMethod' -> oldMethod asDictionary .
-		'newMethod' -> newMethod asDictionary .
+		'signature' -> signature .
+		'commitId' -> commitId .
 		'removedMethodCalls' -> (removedMethodCalls collect: [ :each | each asDictionary ]) asArray .
 		'addedMethodCalls' -> (addedMethodCalls collect: [ :each | each asDictionary ]) asArray .
-		'commit' -> commit asDictionary .
-		'commitDistance' -> commitDistance
 	} asDictionary
 ]
 
@@ -79,51 +73,15 @@ DepMethodChange >> asItemset [
 ]
 
 { #category : #accessing }
-DepMethodChange >> commit [
+DepMethodChange >> commitId [
 
-	^ commit
+	^ commitId
 ]
 
 { #category : #accessing }
-DepMethodChange >> commit: anObject [
+DepMethodChange >> commitId: anObject [
 
-	commit := anObject
-]
-
-{ #category : #accessing }
-DepMethodChange >> commitDistance [
-
-	^ commitDistance
-]
-
-{ #category : #accessing }
-DepMethodChange >> commitDistance: anObject [
-
-	commitDistance := anObject
-]
-
-{ #category : #accessing }
-DepMethodChange >> newMethod [
-
-	^ newMethod
-]
-
-{ #category : #accessing }
-DepMethodChange >> newMethod: anObject [
-
-	newMethod := anObject
-]
-
-{ #category : #accessing }
-DepMethodChange >> oldMethod [
-
-	^ oldMethod
-]
-
-{ #category : #accessing }
-DepMethodChange >> oldMethod: anObject [
-
-	oldMethod := anObject
+	commitId := anObject
 ]
 
 { #category : #'as yet unclassified' }
@@ -136,4 +94,16 @@ DepMethodChange >> removedMethodCalls [
 DepMethodChange >> removedMethodCalls: anObject [
 
 	removedMethodCalls := anObject
+]
+
+{ #category : #accessing }
+DepMethodChange >> signature [
+
+	^ signature
+]
+
+{ #category : #accessing }
+DepMethodChange >> signature: anObject [
+
+	signature := anObject
 ]
