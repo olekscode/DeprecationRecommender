@@ -27,8 +27,8 @@ DepRefactoring class >> fromDictionary: aDictionary [
 		removedMethod: (ClioMethod fromDictionary: (aDictionary at: 'removedMethod'));
 		addedMethod: (ClioMethod fromDictionary: (aDictionary at: 'addedMethod'));
 		similarity: (aDictionary at: 'similarity');
-		removalCommitId: (aDictionary at: 'removalCommit');
-		additionCommitId: (aDictionary at: 'additionCommit');
+		removalCommitId: (aDictionary at: 'removalCommitId');
+		additionCommitId: (aDictionary at: 'additionCommitId');
 		yourself.
 
 ]

@@ -18,7 +18,7 @@ DepRecommendation class >> fromDictionary: aDictionary [
 		replacements: ((aDictionary at: 'replacements') collect: [ :each |
 			ClioMethod fromDictionary: each ]) asOrderedCollection;
 		refactorings: ((aDictionary at: 'refactorings') collect: [ :each |
-			DepRefactoringChain fromArray: each ]) asOrderedCollection;
+			DepRefactoringChain fromJsonArray: each ]) asOrderedCollection;
 		frequentMethodCallReplacements: ((aDictionary at: 'frequentMethodCallReplacements') collect: [ :each |
 			DepMethodCallReplacement fromDictionary: each ]) asOrderedCollection;
 		yourself.
@@ -30,7 +30,7 @@ DepRecommendation >> asDictionary [
 	^ {
 		'method' -> method asDictionary .
 		'replacements' -> (replacements collect: [ :each | each asDictionary ]) asArray .
-		'refactorings' -> (refactorings collect: [ :each | each asArray ]) asArray .
+		'refactorings' -> (refactorings collect: [ :each | each asJsonArray ]) asArray .
 		'frequentMethodCallReplacements'  -> (frequentMethodCallReplacements collect: [ :each | each asDictionary ]) asArray .
 	} asDictionary
 ]

@@ -155,6 +155,6 @@ DepRecommender >> recommendReplacementsFor: aMethod [
 		method: aMethod;
 		refactorings: refactorings;
 		frequentMethodCallReplacements: methodCallReplacements;
-		replacements: (refactorings collect: [ :each | each addedMethod ]) asSet;
+		replacements: (refactorings collect: [ :each | each addedMethod ]) asSet asOrderedCollection;
 		yourself.
 ]

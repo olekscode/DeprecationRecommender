@@ -16,7 +16,7 @@ DepMethodCallMiner >> extractAddedMethodCallsFrom: aMethodModification [
 	oldSelectors := oldMethodCalls collect: [ :each | each selector ].
 	newSelectors := newMethodCalls collect: [ :each | each selector ].
 	
-	addedSelectors := oldSelectors difference: newSelectors.
+	addedSelectors := newSelectors difference: oldSelectors.
 	
 	^ newMethodCalls asOrderedCollection select: [ :methodCall |
 		(addedSelectors includes: methodCall selector) and: [ 
@@ -60,6 +60,9 @@ DepMethodCallMiner >> methodChangesThatRemoveCallsTo: aMethod [
 				removedMethodCalls: (self extractRemovedMethodCallsFrom: modification);
 				addedMethodCalls: (self extractAddedMethodCallsFrom: modification);
 				yourself ] ].
+	
+	methodChanges select: [ :each |
+		each addedMethodCalls isNotEmpty ].
 	
 	^ methodChanges select: [ :each |
 		each addedMethodCalls isNotEmpty and: [
