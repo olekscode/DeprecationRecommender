@@ -5,9 +5,8 @@ Class {
 		'removedMethod',
 		'addedMethod',
 		'similarity',
-		'removalCommit',
-		'additionCommit',
-		'commitDistance'
+		'removalCommitId',
+		'additionCommitId'
 	],
 	#category : #'DeprecationRecommender-Models'
 }
@@ -28,9 +27,8 @@ DepRefactoring class >> fromDictionary: aDictionary [
 		removedMethod: (ClioMethod fromDictionary: (aDictionary at: 'removedMethod'));
 		addedMethod: (ClioMethod fromDictionary: (aDictionary at: 'addedMethod'));
 		similarity: (aDictionary at: 'similarity');
-		removalCommit: (ClioCommit fromDictionary: (aDictionary at: 'removalCommit'));
-		additionCommit: (ClioCommit fromDictionary: (aDictionary at: 'additionCommit'));
-		commitDistance: (aDictionary at: 'commitDistance');
+		removalCommitId: (aDictionary at: 'removalCommit');
+		additionCommitId: (aDictionary at: 'additionCommit');
 		yourself.
 
 ]
@@ -48,15 +46,15 @@ DepRefactoring >> addedMethod: anObject [
 ]
 
 { #category : #accessing }
-DepRefactoring >> additionCommit [
+DepRefactoring >> additionCommitId [
 
-	^ additionCommit
+	^ additionCommitId
 ]
 
 { #category : #accessing }
-DepRefactoring >> additionCommit: anObject [
+DepRefactoring >> additionCommitId: anObject [
 
-	additionCommit := anObject
+	additionCommitId := anObject
 ]
 
 { #category : #converting }
@@ -67,22 +65,9 @@ DepRefactoring >> asDictionary [
 		'removedMethod' -> removedMethod asDictionary .
 		'addedMethod' -> addedMethod asDictionary .
 		'similarity' -> similarity .
-		'removalCommit' -> removalCommit asDictionary .
-		'additionCommit' -> additionCommit asDictionary .
-		'commitDistance' -> commitDistance
+		'removalCommitId' -> removalCommitId .
+		'additionCommitId' -> additionCommitId
 	} asDictionary
-]
-
-{ #category : #accessing }
-DepRefactoring >> commitDistance [
-
-	^ commitDistance
-]
-
-{ #category : #accessing }
-DepRefactoring >> commitDistance: anObject [
-
-	commitDistance := anObject
 ]
 
 { #category : #accessing }
@@ -92,15 +77,15 @@ DepRefactoring >> name [
 ]
 
 { #category : #accessing }
-DepRefactoring >> removalCommit [
+DepRefactoring >> removalCommitId [
 
-	^ removalCommit
+	^ removalCommitId
 ]
 
 { #category : #accessing }
-DepRefactoring >> removalCommit: anObject [
+DepRefactoring >> removalCommitId: anObject [
 
-	removalCommit := anObject
+	removalCommitId := anObject
 ]
 
 { #category : #accessing }

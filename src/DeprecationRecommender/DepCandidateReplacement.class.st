@@ -4,34 +4,21 @@ Class {
 	#instVars : [
 		'method',
 		'similarity',
-		'commit',
-		'commitDistance'
+		'commitId'
 	],
 	#category : #'DeprecationRecommender-Models'
 }
 
 { #category : #accessing }
-DepCandidateReplacement >> commit [
+DepCandidateReplacement >> commitId [
 
-	^ commit
+	^ commitId
 ]
 
 { #category : #accessing }
-DepCandidateReplacement >> commit: anObject [
+DepCandidateReplacement >> commitId: anObject [
 
-	commit := anObject
-]
-
-{ #category : #accessing }
-DepCandidateReplacement >> commitDistance [
-
-	^ commitDistance
-]
-
-{ #category : #accessing }
-DepCandidateReplacement >> commitDistance: anObject [
-
-	commitDistance := anObject
+	commitId := anObject
 ]
 
 { #category : #accessing }

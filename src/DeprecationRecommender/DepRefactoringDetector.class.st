@@ -23,7 +23,7 @@ DepRefactoringDetector >> candidateReplacementsFor: aMethod in: aCollectionOfCom
 		commit addedMethods collect: [ :each |
 			DepCandidateReplacement new
 				method: each;
-				commit: commit;
+				commitId: commit id;
 				yourself ] ].
 	
 	metric := AIShinglesSimilarity
@@ -62,11 +62,9 @@ DepRefactoringDetector >> detectRefactoringsThatRemoved: aMethod [
 				aRefactoringClass new
 					removedMethod: aMethod;
 					addedMethod: replacement method;
-					removalCommit: blamedCommit;
-					additionCommit: replacement commit;
+					removalCommitId: blamedCommit id;
+					additionCommitId: replacement commitId;
 					similarity: replacement similarity;
-					commitDistance: (projectHistory commits indexOf: replacement commit) -
-						(projectHistory commits indexOf:blamedCommit);
 					yourself ]
 			ifNone: [ nil ] ].
 	
