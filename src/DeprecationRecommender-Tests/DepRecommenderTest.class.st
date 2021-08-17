@@ -1,5 +1,5 @@
 Class {
-	#name : #DeprecationRecommenderTest,
+	#name : #DepRecommenderTest,
 	#superclass : #TestCase,
 	#category : #'DeprecationRecommender-Tests'
 }
