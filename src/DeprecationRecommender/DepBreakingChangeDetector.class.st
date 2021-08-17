@@ -2,33 +2,50 @@ Class {
 	#name : #DepBreakingChangeDetector,
 	#superclass : #Object,
 	#instVars : [
-		'oldVersionSnapshot',
-		'newVersionSnapshot'
+		'data'
 	],
 	#category : #'DeprecationRecommender-Controllers'
 }
 
 { #category : #recommendation }
 DepBreakingChangeDetector >> breakingChangeMethods [
-	| methods deletedClassNames |
 	
-	methods := self deletedPublicMethods.
-	"deletedClassNames := self deletedPublicClasses collect: [ :aClass | aClass name ]."
+	| projectClassNames breakingSelectors methods |
 	
-	^ methods reject: [ :method |
-		method isEmpty or: [
-			method isAbstract "or: [
-				deletedClassNames includes: method methodClass name ]" ] ].
+	projectClassNames := data oldClasses collect: [ :each | each name ].
+	
+	breakingSelectors := self deletedSupportedSelectors select: [ :each |
+		projectClassNames includes: each implementorClassName ].
+	
+	methods := breakingSelectors collect: [ :selector |
+		data oldImplementedMethods detect: [ :method |
+			(method name = selector name) and: [ 
+				(method methodClass name = selector implementorClassName) and: [ 
+					method isClassSide = selector isClassSide ] ] ] ].
+	
+	methods := methods select: [ :method |
+		VisibilityDeductor new isMethodPublic: method ].
+	
+	methods := methods reject: [ :method |
+		method isAbstract or: [ method isEmpty ] ].
+	
+	^ methods asSet
+]
+
+{ #category : #accessing }
+DepBreakingChangeDetector >> data: anObject [
+
+	data := anObject
 ]
 
 { #category : #private }
 DepBreakingChangeDetector >> deletedPublicClasses [
 	| oldPublicClasses newPublicClasses oldClassDictionary oldNames newNames deletedNames |
 	
-	oldPublicClasses := oldVersionSnapshot classes select: [ :each |
+	oldPublicClasses := data oldClasses select: [ :each |
 		VisibilityDeductor new isClassPublic: each ].
 	
-	newPublicClasses := newVersionSnapshot classes select: [ :each |
+	newPublicClasses := data newClasses select: [ :each |
 		VisibilityDeductor new isClassPublic: each ].
 	
 	oldClassDictionary := Dictionary new.
@@ -49,10 +66,10 @@ DepBreakingChangeDetector >> deletedPublicClasses [
 DepBreakingChangeDetector >> deletedPublicMethods [
 	| oldPublicMethods newPublicMethods oldMethodDictionary oldSignatures newSignatures deletedSignatures |
 	
-	oldPublicMethods := oldVersionSnapshot methods select: [ :each |
+	oldPublicMethods := data oldImplementedMethods select: [ :each |
 		VisibilityDeductor new isMethodPublic: each ].
 	
-	newPublicMethods := newVersionSnapshot methods select: [ :each |
+	newPublicMethods := data newImplementedMethods select: [ :each |
 		VisibilityDeductor new isMethodPublic: each ].
 	
 	oldMethodDictionary := Dictionary new.
@@ -69,14 +86,20 @@ DepBreakingChangeDetector >> deletedPublicMethods [
 		oldMethodDictionary at: each ]
 ]
 
-{ #category : #accessing }
-DepBreakingChangeDetector >> newVersionSnapshot: anObject [
+{ #category : #private }
+DepBreakingChangeDetector >> deletedSupportedSelectors [
+	| oldSelectorDictionary oldSignatures newSignatures deletedSignatures |
 
-	newVersionSnapshot := anObject
-]
-
-{ #category : #accessing }
-DepBreakingChangeDetector >> oldVersionSnapshot: anObject [
-
-	oldVersionSnapshot := anObject
+	oldSelectorDictionary := Dictionary new.
+	
+	data oldSupportedSelectors do: [ :each |
+		oldSelectorDictionary at: each signature put: each ].
+	
+	oldSignatures := oldSelectorDictionary keys asSet.
+	newSignatures := (data newSupportedSelectors collect: [ :each | each signature ]) asSet.
+	
+	deletedSignatures := oldSignatures difference: newSignatures.
+	
+	^ deletedSignatures asOrderedCollection collect: [ :each |
+		oldSelectorDictionary at: each ]
 ]
