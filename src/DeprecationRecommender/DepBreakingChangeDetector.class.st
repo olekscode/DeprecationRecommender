@@ -63,30 +63,6 @@ DepBreakingChangeDetector >> deletedPublicClasses [
 ]
 
 { #category : #private }
-DepBreakingChangeDetector >> deletedPublicMethods [
-	| oldPublicMethods newPublicMethods oldMethodDictionary oldSignatures newSignatures deletedSignatures |
-	
-	oldPublicMethods := data oldImplementedMethods select: [ :each |
-		VisibilityDeductor new isMethodPublic: each ].
-	
-	newPublicMethods := data newImplementedMethods select: [ :each |
-		VisibilityDeductor new isMethodPublic: each ].
-	
-	oldMethodDictionary := Dictionary new.
-	
-	oldPublicMethods do: [ :each |
-		oldMethodDictionary at: each signature put: each ].
-	
-	oldSignatures := oldMethodDictionary keys asSet.
-	newSignatures := (newPublicMethods collect: [ :each | each signature ]) asSet.
-	
-	deletedSignatures := oldSignatures difference: newSignatures.
-	
-	^ deletedSignatures asOrderedCollection collect: [ :each |
-		oldMethodDictionary at: each ]
-]
-
-{ #category : #private }
 DepBreakingChangeDetector >> deletedSupportedSelectors [
 	| oldSelectorDictionary oldSignatures newSignatures deletedSignatures |
 
