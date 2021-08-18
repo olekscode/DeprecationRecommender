@@ -2,9 +2,7 @@ Class {
 	#name : #DepReplacementRecommender,
 	#superclass : #Object,
 	#instVars : [
-		'oldVersionSnapshot',
-		'newVersionSnapshot',
-		'projectHistory'
+		'data'
 	],
 	#category : #'DeprecationRecommender-Controllers'
 }
@@ -12,7 +10,7 @@ Class {
 { #category : #'as yet unclassified' }
 DepReplacementRecommender >> candidateReplacementsFor: aMethod [
 	| spy blamedCommit addedMethods metric |
-	spy := DepCommitBlamer in: projectHistory.
+	spy := DepCommitBlamer in: data.
 
 	blamedCommit := spy commitThatRemovedMethod: aMethod.
 	
@@ -29,39 +27,15 @@ DepReplacementRecommender >> candidateReplacementsFor: aMethod [
 ]
 
 { #category : #accessing }
-DepReplacementRecommender >> newVersionSnapshot [
+DepReplacementRecommender >> data [
 
-	^ newVersionSnapshot
+	^ data
 ]
 
 { #category : #accessing }
-DepReplacementRecommender >> newVersionSnapshot: anObject [
+DepReplacementRecommender >> data: anObject [
 
-	newVersionSnapshot := anObject
-]
-
-{ #category : #accessing }
-DepReplacementRecommender >> oldVersionSnapshot [
-
-	^ oldVersionSnapshot
-]
-
-{ #category : #accessing }
-DepReplacementRecommender >> oldVersionSnapshot: anObject [
-
-	oldVersionSnapshot := anObject
-]
-
-{ #category : #accessing }
-DepReplacementRecommender >> projectHistory [
-
-	^ projectHistory
-]
-
-{ #category : #accessing }
-DepReplacementRecommender >> projectHistory: anObject [
-
-	projectHistory := anObject
+	data := anObject
 ]
 
 { #category : #'as yet unclassified' }
@@ -70,15 +44,11 @@ DepReplacementRecommender >> recommendReplacementsFor: aMethod [
 	| strategy1 strategy2 refactorings methodCallReplacements |
 	
 	strategy1 := DepRefactoringDetector new
-		projectHistory: projectHistory;
-		oldVersionSnapshot: oldVersionSnapshot;
-		newVersionSnapshot: newVersionSnapshot;
+		data: data;
 		yourself.
 		
 	strategy2 := DepMethodCallMiner new
-		projectHistory: projectHistory;
-		oldVersionSnapshot: oldVersionSnapshot;
-		newVersionSnapshot: newVersionSnapshot;
+		data: data;
 		yourself.
 		
 	refactorings := strategy1 detectRefactoringsThatRemoved: aMethod.

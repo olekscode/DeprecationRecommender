@@ -2,9 +2,7 @@ Class {
 	#name : #DepRecommendationStrategy,
 	#superclass : #Object,
 	#instVars : [
-		'projectHistory',
-		'oldVersionSnapshot',
-		'newVersionSnapshot',
+		'data',
 		'newVersionSelectors',
 		'oldVersionSelectors'
 	],
@@ -15,7 +13,7 @@ Class {
 DepRecommendationStrategy >> commitThatRemovedMethod: aMethod [
 
 	| blamer |
-	blamer := DepCommitBlamer in: projectHistory.
+	blamer := DepCommitBlamer in: data.
 	^ blamer commitThatRemovedMethod: aMethod.
 ]
 
@@ -23,38 +21,33 @@ DepRecommendationStrategy >> commitThatRemovedMethod: aMethod [
 DepRecommendationStrategy >> commitsSurrounding: aCommit [
 
 	| commitIndex windowSize |
-	commitIndex := projectHistory commits indexOf: aCommit.
+	commitIndex := data commits indexOf: aCommit.
 	
 	windowSize := 10.
 	
-	^ projectHistory commits
+	^ data commits
 		copyFrom: commitIndex
-		to: ((commitIndex + windowSize) min: projectHistory commits size).
+		to: ((commitIndex + windowSize) min: data commits size).
+]
+
+{ #category : #accessing }
+DepRecommendationStrategy >> data [
+
+	^ data
+]
+
+{ #category : #accessing }
+DepRecommendationStrategy >> data: anObject [
+
+	data := anObject.
+	
+	oldVersionSelectors := data oldImplementedMethods collect: [ :each | each selector ].
+	newVersionSelectors := data newImplementedMethods collect: [ :each | each selector ].
 ]
 
 { #category : #testing }
 DepRecommendationStrategy >> isInNewVersion: aMethod [
 
-	^ newVersionSnapshot methods anySatisfy: [ :method |
+	^ data newImplementedMethods anySatisfy: [ :method |
 		method signature = aMethod signature ].
-]
-
-{ #category : #accessing }
-DepRecommendationStrategy >> newVersionSnapshot: anObject [
-
-	newVersionSnapshot := anObject.
-	newVersionSelectors := newVersionSnapshot selectors.
-]
-
-{ #category : #accessing }
-DepRecommendationStrategy >> oldVersionSnapshot: anObject [
-
-	oldVersionSnapshot := anObject.
-	oldVersionSelectors := oldVersionSnapshot selectors.
-]
-
-{ #category : #accessing }
-DepRecommendationStrategy >> projectHistory: anObject [
-
-	projectHistory := anObject
 ]

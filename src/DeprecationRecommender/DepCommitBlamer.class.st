@@ -2,15 +2,15 @@ Class {
 	#name : #DepCommitBlamer,
 	#superclass : #Object,
 	#instVars : [
-		'projectHistory'
+		'data'
 	],
 	#category : #'DeprecationRecommender-Controllers'
 }
 
 { #category : #'instance creation' }
-DepCommitBlamer class >> in: aProjectHistory [
+DepCommitBlamer class >> in: aData [
 	^ self new
-		projectHistory: aProjectHistory;
+		data: aData;
 		yourself
 ]
 
@@ -21,7 +21,7 @@ DepCommitBlamer >> commitThatAddedClass: aClass [
 
 { #category : #'history search' }
 DepCommitBlamer >> commitThatAddedClassNamed: aName [
-	^ projectHistory commits reversed
+	^ data commits reversed
 		detect: [ :aCommit |
 			aCommit addedClasses anySatisfy: [ :each |
 				each name = aName and: [ (self isMergeCommit: aCommit) not ] ] ]
@@ -35,7 +35,7 @@ DepCommitBlamer >> commitThatAddedMethod: aMethod [
 
 { #category : #'history search' }
 DepCommitBlamer >> commitThatAddedMethodWithSignature: aSignature [
-	^ projectHistory commits reversed
+	^ data commits reversed
 		detect: [ :aCommit |
 			aCommit addedMethods anySatisfy: [ :each |
 				each signature = aSignature and: [ (self isMergeCommit: aCommit) not ] ] ]
@@ -49,7 +49,7 @@ DepCommitBlamer >> commitThatRemovedClass: aClass [
 
 { #category : #'history search' }
 DepCommitBlamer >> commitThatRemovedClassNamed: aName [
-	^ projectHistory commits reversed
+	^ data commits reversed
 		detect: [ :aCommit |
 			aCommit removedClasses anySatisfy: [ :each |
 				each name = aName and: [ (self isMergeCommit: aCommit) not ] ] ]
@@ -63,26 +63,26 @@ DepCommitBlamer >> commitThatRemovedMethod: aMethod [
 
 { #category : #'history search' }
 DepCommitBlamer >> commitThatRemovedMethodWithSignature: aSignature [
-	^ projectHistory commits reversed
+	^ data commits reversed
 		detect: [ :aCommit |
 			aCommit removedMethods anySatisfy: [ :each |
 				each signature = aSignature and: [ (self isMergeCommit: aCommit) not ] ] ]
 		ifNone: [ nil ].
 ]
 
+{ #category : #accessing }
+DepCommitBlamer >> data [
+
+	^ data
+]
+
+{ #category : #accessing }
+DepCommitBlamer >> data: anObject [
+
+	data := anObject
+]
+
 { #category : #private }
 DepCommitBlamer >> isMergeCommit: aCommit [
 	^ aCommit comment beginsWith: 'Merge'
-]
-
-{ #category : #accessing }
-DepCommitBlamer >> projectHistory [
-
-	^ projectHistory
-]
-
-{ #category : #accessing }
-DepCommitBlamer >> projectHistory: anObject [
-
-	projectHistory := anObject
 ]
