@@ -17,12 +17,13 @@ DepRefactoring class >> fromJsonDictionary: aDictionary [
 	| refactoringClass |
 	refactoringClass := self allSubclasses detect: [ :each | each new name = (aDictionary at: 'name') ].
 	
+	"We temporarily store commit ids instead of actual commits"
 	^ refactoringClass new
 		removedMethod: (ClioMethod fromJsonDictionary: (aDictionary at: 'removedMethod'));
 		addedMethod: (ClioMethod fromJsonDictionary: (aDictionary at: 'addedMethod'));
 		similarity: (aDictionary at: 'similarity');
-		removalCommitId: (aDictionary at: 'removalCommitId');
-		additionCommitId: (aDictionary at: 'additionCommitId');
+		removalCommit: (aDictionary at: 'removalCommitId');
+		additionCommit: (aDictionary at: 'additionCommitId');
 		yourself.
 
 ]

@@ -7,7 +7,7 @@ Class {
 { #category : #'instance creation' }
 DepRefactoringChain class >> fromJsonArray: anArray [
 
-	^ self withAll: (anArray collect: [ :each | DepRefactoring fromDictionary: each ])
+	^ self withAll: (anArray collect: [ :each | DepRefactoring fromJsonDictionary: each ])
 ]
 
 { #category : #'as yet unclassified' }
@@ -19,7 +19,7 @@ DepRefactoringChain >> addedMethod [
 { #category : #converting }
 DepRefactoringChain >> asJsonArray [
 	
-	^ (self collect: [ :each | each asDictionary ]) asArray
+	^ (self collect: [ :each | each asJsonDictionary ]) asArray
 ]
 
 { #category : #copying }

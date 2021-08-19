@@ -14,12 +14,12 @@ Class {
 }
 
 { #category : #'instance creation' }
-DepMethodCallReplacement class >> fromDictionary: aDictionary [
+DepMethodCallReplacement class >> fromJsonDictionary: aDictionary [
 
 	^ self new
 		removedSelectors: (aDictionary at: 'removedSelectors') asOrderedCollection;
 		addedSelectors: (aDictionary at: 'addedSelectors') asOrderedCollection;
-		methodChanges: ((aDictionary at: 'methodChanges') collect: [ :each | DepMethodChange fromDictionary: each ]) asOrderedCollection;
+		methodChanges: ((aDictionary at: 'methodChanges') collect: [ :each | DepMethodChange fromJsonDictionary: each ]) asOrderedCollection;
 		count: (aDictionary at: 'count');
 		support: (aDictionary at: 'support');
 		confidence: (aDictionary at: 'confidence');
@@ -40,12 +40,12 @@ DepMethodCallReplacement >> addedSelectors: anObject [
 ]
 
 { #category : #converting }
-DepMethodCallReplacement >> asDictionary [
+DepMethodCallReplacement >> asJsonDictionary [
 
 	^ { 
 		'removedSelectors' -> removedSelectors asArray .
 		'addedSelectors' -> addedSelectors asArray .
-		'methodChanges' -> (methodChanges collect: [ :each | each asDictionary ]) asArray .
+		'methodChanges' -> (methodChanges collect: [ :each | each asJsonDictionary ]) asArray .
 		'count' -> count .
 		'support' -> support .
 		'confidence' -> confidence .

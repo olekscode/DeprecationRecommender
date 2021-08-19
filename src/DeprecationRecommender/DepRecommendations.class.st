@@ -12,14 +12,14 @@ DepRecommendations class >> readFromJsonFile: aFileReference [
 	array := aFileReference readStreamDo: [ :stream |
 		STONJSON fromStream: stream ].
 	
-	^ self withAll: (array collect: [ :each | DepRecommendation fromDictionary: each ]).
+	^ self withAll: (array collect: [ :each | DepRecommendation fromJsonDictionary: each ]).
 ]
 
 { #category : #converting }
 DepRecommendations >> saveToJsonFile: aFileReference [
 
 	| object |
-	object := (self collect: [ :each | each asDictionary ]) asArray.
+	object := (self collect: [ :each | each asJsonDictionary ]) asArray.
 	
 	aFileReference writeStreamDo: [ :stream |
 		STONJSON put: object onStreamPretty: stream ].

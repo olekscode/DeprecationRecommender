@@ -11,15 +11,15 @@ Class {
 }
 
 { #category : #'instance creation' }
-DepMethodChange class >> fromDictionary: aDictionary [
+DepMethodChange class >> fromJsonDictionary: aDictionary [
 
 	| removedMethodCalls addedMethodCalls |
 	
 	removedMethodCalls := ((aDictionary at: 'removedMethodCalls') collect: [ :each |
-		ClioMethodCall fromDictionary: each ]) asOrderedCollection.
+		ClioMethodCall fromJsonDictionary: each ]) asOrderedCollection.
 	
 	addedMethodCalls := ((aDictionary at: 'addedMethodCalls') collect: [ :each |
-		ClioMethodCall fromDictionary: each ]) asOrderedCollection.
+		ClioMethodCall fromJsonDictionary: each ]) asOrderedCollection.
 	
 	^ self new
 		signature: (aDictionary at: 'signature');
@@ -42,17 +42,6 @@ DepMethodChange >> addedMethodCalls: anObject [
 ]
 
 { #category : #converting }
-DepMethodChange >> asDictionary [
-
-	^ { 
-		'signature' -> signature .
-		'commitId' -> commitId .
-		'removedMethodCalls' -> (removedMethodCalls collect: [ :each | each asDictionary ]) asArray .
-		'addedMethodCalls' -> (addedMethodCalls collect: [ :each | each asDictionary ]) asArray .
-	} asDictionary
-]
-
-{ #category : #converting }
 DepMethodChange >> asItemset [
 
 	| addedCalls removedCalls |
@@ -70,6 +59,17 @@ DepMethodChange >> asItemset [
 			yourself ].
 		
 	^ addedCalls asSet union: removedCalls asSet
+]
+
+{ #category : #converting }
+DepMethodChange >> asJsonDictionary [
+
+	^ { 
+		'signature' -> signature .
+		'commitId' -> commitId .
+		'removedMethodCalls' -> (removedMethodCalls collect: [ :each | each asJsonDictionary ]) asArray .
+		'addedMethodCalls' -> (addedMethodCalls collect: [ :each | each asJsonDictionary ]) asArray .
+	} asDictionary
 ]
 
 { #category : #accessing }

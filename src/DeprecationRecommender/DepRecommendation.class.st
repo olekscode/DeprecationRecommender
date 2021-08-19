@@ -11,27 +11,27 @@ Class {
 }
 
 { #category : #'instance creation' }
-DepRecommendation class >> fromDictionary: aDictionary [
+DepRecommendation class >> fromJsonDictionary: aDictionary [
 
 	^ self new
-		method: (ClioMethod fromDictionary: (aDictionary at: 'method'));
+		method: (ClioMethod fromJsonDictionary: (aDictionary at: 'method'));
 		replacements: ((aDictionary at: 'replacements') collect: [ :each |
-			ClioMethod fromDictionary: each ]) asOrderedCollection;
+			ClioMethod fromJsonDictionary: each ]) asOrderedCollection;
 		refactorings: ((aDictionary at: 'refactorings') collect: [ :each |
 			DepRefactoringChain fromJsonArray: each ]) asOrderedCollection;
 		frequentMethodCallReplacements: ((aDictionary at: 'frequentMethodCallReplacements') collect: [ :each |
-			DepMethodCallReplacement fromDictionary: each ]) asOrderedCollection;
+			DepMethodCallReplacement fromJsonDictionary: each ]) asOrderedCollection;
 		yourself.
 ]
 
 { #category : #converting }
-DepRecommendation >> asDictionary [
+DepRecommendation >> asJsonDictionary [
 	
 	^ {
-		'method' -> method asDictionary .
-		'replacements' -> (replacements collect: [ :each | each asDictionary ]) asArray .
+		'method' -> method asJsonDictionary .
+		'replacements' -> (replacements collect: [ :each | each asJsonDictionary ]) asArray .
 		'refactorings' -> (refactorings collect: [ :each | each asJsonArray ]) asArray .
-		'frequentMethodCallReplacements'  -> (frequentMethodCallReplacements collect: [ :each | each asDictionary ]) asArray .
+		'frequentMethodCallReplacements'  -> (frequentMethodCallReplacements collect: [ :each | each asJsonDictionary ]) asArray .
 	} asDictionary
 ]
 
