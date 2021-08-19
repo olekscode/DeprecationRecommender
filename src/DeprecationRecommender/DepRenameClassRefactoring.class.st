@@ -7,14 +7,14 @@ Class {
 { #category : #testing }
 DepRenameClassRefactoring >> canExplainReplacement [
 
-	^ addedMethod fullClassName ~= removedMethod fullClassName
-		and: [ addedMethod selector = removedMethod selector ]
+	^ self wasMethodMovedToAnotherClass and: [ 
+		self wasClassRenamed ]
 ]
 
 { #category : #accessing }
 DepRenameClassRefactoring >> name [
 	
-	^ 'RenameMethod'
+	^ 'RenameClass'
 ]
 
 { #category : #printing }

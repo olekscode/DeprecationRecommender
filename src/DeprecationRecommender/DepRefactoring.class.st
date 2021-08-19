@@ -111,3 +111,50 @@ DepRefactoring >> similarity: anObject [
 
 	similarity := anObject
 ]
+
+{ #category : #testing }
+DepRefactoring >> wasClassAdded [
+	"Answer true if the same commit that added the method also added the class to which this method belongs"
+
+	^ additionCommit addedClasses
+		anySatisfy: [ :aClass | aClass name = addedMethod className ].
+]
+
+{ #category : #testing }
+DepRefactoring >> wasClassRemoved [
+	"Answer true if the same commit that removed the method also removed the class to which this method belongs"
+
+	^ removalCommit removedClasses
+		anySatisfy: [ :aClass | aClass name = removedMethod className ].
+]
+
+{ #category : #testing }
+DepRefactoring >> wasClassRenamed [
+
+	^ self wasClassRemoved and: [
+		self wasClassAdded and: [
+			self wereAllMethodsOfOldClassMovedToNewClass ] ]
+]
+
+{ #category : #testing }
+DepRefactoring >> wasMethodMovedToAnotherClass [
+
+	^ addedMethod fullClassName ~= removedMethod fullClassName
+		and: [ addedMethod selector = removedMethod selector ].
+]
+
+{ #category : #testing }
+DepRefactoring >> wereAllMethodsOfOldClassMovedToNewClass [
+
+	| removedSelectors addedSelectors |
+	
+	removedSelectors := removalCommit removedMethods
+		select: [ :each | each className = removedMethod className ]
+		thenCollect: [ :each | each name ].
+		
+	addedSelectors := additionCommit addedMethods
+		select: [ :each | each className = addedMethod className ]
+		thenCollect: [ :each | each name ].
+		
+	^ removedSelectors asSet = addedSelectors asSet.
+]

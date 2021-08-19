@@ -89,6 +89,7 @@ DepRefactoringDetector >> refactoringsList [
 
 	^ { 
 		DepRenameMethodRefactoring .
+		DepRenameClassRefactoring .
 		DepChangeSignatureRefactoring .
 		DepMoveRefactoring .
 		DepMoveRenameRefactoring .
