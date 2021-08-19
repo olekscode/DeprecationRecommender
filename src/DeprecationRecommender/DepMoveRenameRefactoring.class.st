@@ -5,11 +5,11 @@ Class {
 }
 
 { #category : #testing }
-DepMoveRenameRefactoring class >> canExplainReplacementOf: aMethod with: aReplacementMethod [
+DepMoveRenameRefactoring >> canExplainReplacement [
 
-	^ aReplacementMethod methodClass ~= aMethod methodClass
-		and: [ aReplacementMethod selector ~= aMethod selector
-			and: [ aReplacementMethod numberOfArguments = aMethod numberOfArguments ] ]
+	^ addedMethod methodClass ~= removedMethod methodClass
+		and: [ addedMethod selector ~= removedMethod selector
+			and: [ addedMethod numberOfArguments = removedMethod numberOfArguments ] ]
 ]
 
 { #category : #accessing }
@@ -28,7 +28,7 @@ DepMoveRenameRefactoring >> printOn: aStream [
 		nextPutAll: '->';
 		nextPutAll: addedMethod fullClassName;
 		nextPutAll: ') + ';
-		nextPutAll: DepRenameRefactoring new name;
+		nextPutAll: DepRenameMethodRefactoring new name;
 		nextPut: $(;
 		nextPutAll: removedMethod name;
 		nextPutAll: '->';

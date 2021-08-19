@@ -11,21 +11,15 @@ Class {
 	#category : #'DeprecationRecommender-Models'
 }
 
-{ #category : #testing }
-DepRefactoring class >> canExplainReplacementOf: aMethod with: aReplacementMethod [
-
-	self subclassResponsibility
-]
-
 { #category : #'instance creation' }
-DepRefactoring class >> fromDictionary: aDictionary [
+DepRefactoring class >> fromJsonDictionary: aDictionary [
 	
 	| refactoringClass |
 	refactoringClass := self allSubclasses detect: [ :each | each new name = (aDictionary at: 'name') ].
 	
 	^ refactoringClass new
-		removedMethod: (ClioMethod fromDictionary: (aDictionary at: 'removedMethod'));
-		addedMethod: (ClioMethod fromDictionary: (aDictionary at: 'addedMethod'));
+		removedMethod: (ClioMethod fromJsonDictionary: (aDictionary at: 'removedMethod'));
+		addedMethod: (ClioMethod fromJsonDictionary: (aDictionary at: 'addedMethod'));
 		similarity: (aDictionary at: 'similarity');
 		removalCommitId: (aDictionary at: 'removalCommitId');
 		additionCommitId: (aDictionary at: 'additionCommitId');
@@ -58,16 +52,22 @@ DepRefactoring >> additionCommitId: anObject [
 ]
 
 { #category : #converting }
-DepRefactoring >> asDictionary [
+DepRefactoring >> asJsonDictionary [
 
 	^ { 
 		'name' -> self name .
-		'removedMethod' -> removedMethod asDictionary .
-		'addedMethod' -> addedMethod asDictionary .
+		'removedMethod' -> removedMethod asJsonDictionary .
+		'addedMethod' -> addedMethod asJsonDictionary .
 		'similarity' -> similarity .
 		'removalCommitId' -> removalCommitId .
 		'additionCommitId' -> additionCommitId
 	} asDictionary
+]
+
+{ #category : #testing }
+DepRefactoring >> canExplainReplacement [
+
+	self subclassResponsibility
 ]
 
 { #category : #accessing }

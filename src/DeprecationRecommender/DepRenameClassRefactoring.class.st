@@ -1,24 +1,24 @@
 Class {
-	#name : #DepMoveRefactoring,
+	#name : #DepRenameClassRefactoring,
 	#superclass : #DepRefactoring,
 	#category : #'DeprecationRecommender-Models'
 }
 
 { #category : #testing }
-DepMoveRefactoring >> canExplainReplacement [
+DepRenameClassRefactoring >> canExplainReplacement [
 
 	^ addedMethod fullClassName ~= removedMethod fullClassName
 		and: [ addedMethod selector = removedMethod selector ]
 ]
 
 { #category : #accessing }
-DepMoveRefactoring >> name [
+DepRenameClassRefactoring >> name [
 	
-	^ 'MoveMethod'
+	^ 'RenameMethod'
 ]
 
 { #category : #printing }
-DepMoveRefactoring >> printOn: aStream [
+DepRenameClassRefactoring >> printOn: aStream [
 
 	aStream
 		nextPutAll: self name;

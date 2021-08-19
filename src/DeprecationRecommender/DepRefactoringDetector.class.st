@@ -45,7 +45,7 @@ DepRefactoringDetector >> candidateReplacementsFor: aMethod in: aCollectionOfCom
 { #category : #'as yet unclassified' }
 DepRefactoringDetector >> detectRefactoringsThatRemoved: aMethod [
 
-	| blamedCommit surroundingCommits candidateReplacements refactorings refactoringChains validChains |
+	| blamedCommit surroundingCommits candidateReplacements candidateRefactorings refactorings refactoringChains validChains |
 	
 	(self canBeAppliedTo: aMethod) ifFalse: [ ^ OrderedCollection new ].
 	
@@ -56,6 +56,20 @@ DepRefactoringDetector >> detectRefactoringsThatRemoved: aMethod [
 	candidateReplacements := self candidateReplacementsFor: aMethod in: surroundingCommits.
 	
 	refactorings := candidateReplacements collect: [ :replacement |
+		candidateRefactorings := self refactoringsList collect: [ :aRefactoringClass |
+			aRefactoringClass new
+				removedMethod: aMethod;
+				addedMethod: replacement method;
+				removalCommitId: blamedCommit id;
+				additionCommitId: replacement commitId;
+				similarity: replacement similarity;
+				yourself ].
+			
+		candidateRefactorings
+			detect: [ :each | each canExplainReplacement ]
+			ifNone: [ nil ] ].
+	
+	"refactorings := candidateReplacements collect: [ :replacement |
 		self refactoringsList
 			detect: [ :each | each canExplainReplacementOf: aMethod with: replacement method ]
 			ifFound: [ :aRefactoringClass |
@@ -66,7 +80,7 @@ DepRefactoringDetector >> detectRefactoringsThatRemoved: aMethod [
 					additionCommitId: replacement commitId;
 					similarity: replacement similarity;
 					yourself ]
-			ifNone: [ nil ] ].
+			ifNone: [ nil ] ]."
 	
 	refactorings := refactorings reject: [ :each | each isNil ].	
 	refactoringChains := refactorings collect: [ :each | DepRefactoringChain with: each ].
@@ -87,7 +101,7 @@ DepRefactoringDetector >> detectRefactoringsThatRemoved: aMethod [
 DepRefactoringDetector >> refactoringsList [
 
 	^ { 
-		DepRenameRefactoring .
+		DepRenameMethodRefactoring .
 		DepChangeSignatureRefactoring .
 		DepMoveRefactoring .
 		DepMoveRenameRefactoring .

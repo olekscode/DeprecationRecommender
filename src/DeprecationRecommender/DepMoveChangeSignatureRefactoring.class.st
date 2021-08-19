@@ -5,11 +5,11 @@ Class {
 }
 
 { #category : #testing }
-DepMoveChangeSignatureRefactoring class >> canExplainReplacementOf: aMethod with: aReplacementMethod [
+DepMoveChangeSignatureRefactoring >> canExplainReplacement [
 
-	^ aReplacementMethod methodClass ~= aMethod methodClass
-		and: [ aReplacementMethod selector ~= aMethod selector
-			and: [ aReplacementMethod numberOfArguments ~= aMethod numberOfArguments ] ]
+	^ addedMethod methodClass ~= removedMethod methodClass
+		and: [ addedMethod selector ~= removedMethod selector
+			and: [ addedMethod numberOfArguments ~= removedMethod numberOfArguments ] ]
 ]
 
 { #category : #accessing }

@@ -4,10 +4,17 @@ Class {
 	#instVars : [
 		'data',
 		'newVersionSelectors',
-		'oldVersionSelectors'
+		'oldVersionSelectors',
+		'windowSize'
 	],
 	#category : #'DeprecationRecommender-Controllers'
 }
+
+{ #category : #'as yet unclassified' }
+DepRecommendationStrategy class >> defaultWindowSize [
+	
+	^ 10
+]
 
 { #category : #'history search' }
 DepRecommendationStrategy >> commitThatRemovedMethod: aMethod [
@@ -20,20 +27,12 @@ DepRecommendationStrategy >> commitThatRemovedMethod: aMethod [
 { #category : #'history search' }
 DepRecommendationStrategy >> commitsSurrounding: aCommit [
 
-	| commitIndex windowSize |
+	| commitIndex |
 	commitIndex := data commits indexOf: aCommit.
-	
-	windowSize := 10.
 	
 	^ data commits
 		copyFrom: commitIndex
 		to: ((commitIndex + windowSize) min: data commits size).
-]
-
-{ #category : #accessing }
-DepRecommendationStrategy >> data [
-
-	^ data
 ]
 
 { #category : #accessing }
@@ -45,9 +44,21 @@ DepRecommendationStrategy >> data: anObject [
 	newVersionSelectors := data newImplementedMethods collect: [ :each | each selector ].
 ]
 
+{ #category : #initialization }
+DepRecommendationStrategy >> initialize [
+	super initialize.
+	windowSize := self class defaultWindowSize.
+]
+
 { #category : #testing }
 DepRecommendationStrategy >> isInNewVersion: aMethod [
 
 	^ data newImplementedMethods anySatisfy: [ :method |
 		method signature = aMethod signature ].
+]
+
+{ #category : #accessing }
+DepRecommendationStrategy >> windowSize: aNumber [
+
+	windowSize := aNumber 
 ]
