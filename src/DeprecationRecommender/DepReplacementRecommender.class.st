@@ -8,7 +8,18 @@ Class {
 }
 
 { #category : #'as yet unclassified' }
-DepReplacementRecommender >> allCombinationsOfReplacements: aCollection withSelectors: selectors [
+DepReplacementRecommender >> addFrequentMethodCallReplacements: methodCallReplacements toMethodReplacements: methodReplacements [
+
+	methodCallReplacements do: [ :each |
+		methodReplacements
+			select: [ :replacement |
+				replacement newMethods first selector = each addedSelectors anyOne ]
+			thenDo: [ :replacement | replacement frequentMethodCallReplacement: each ] ].
+]
+
+{ #category : #'as yet unclassified' }
+DepReplacementRecommender >> allCombinationsOfMethodReplacements: aCollection withSelectors: selectors [
+	"Recursively builds all possible combinations of actual methods in the new version of the project that match the itemset of selectors"
 
 	| methodsWithFirstSelector replacements |
 	selectors ifEmpty: [ ^ aCollection ].
@@ -23,8 +34,16 @@ DepReplacementRecommender >> allCombinationsOfReplacements: aCollection withSele
 				methodsWithFirstSelector collect: [ :method |
 					replacement copyWith: method ] ] ].
 		
-	^ self allCombinationsOfReplacements: replacements withSelectors: selectors allButFirst.
+	^ self
+		allCombinationsOfMethodReplacements: replacements
+		withSelectors: selectors allButFirst.
 	
+]
+
+{ #category : #'as yet unclassified' }
+DepReplacementRecommender >> allCombinationsOfMethodReplacementsWithSelectors: selectors [
+	
+	^ self allCombinationsOfMethodReplacements: #() withSelectors: selectors
 ]
 
 { #category : #'history search' }
@@ -94,13 +113,47 @@ DepReplacementRecommender >> recommendReplacementsFor: aMethod [
 ]
 
 { #category : #'as yet unclassified' }
-DepReplacementRecommender >> suggestReplacementsFor: aMethod basedOn: aCollectionOfRefactorings and: aCollectionOfMethodCallReplacements [
+DepReplacementRecommender >> suggestReplacementsFor: aMethod basedOn: refactorings and: methodCallReplacements [
 
-	| replacementDictionary replacements |
+	| replacements |
+	
+	replacements := self
+		suggestReplacementsFor: aMethod
+		basedOnRefactorings: refactorings.
+	
+	self
+		addFrequentMethodCallReplacements: methodCallReplacements
+		toMethodReplacements: replacements.
+	
+	replacements ifEmpty: [ 
+		replacements := self
+			suggestReplacementsFor: aMethod
+			basedOnMethodCallReplacements: methodCallReplacements ].
+			
+	^ replacements
+]
+
+{ #category : #'as yet unclassified' }
+DepReplacementRecommender >> suggestReplacementsFor: aMethod basedOnMethodCallReplacements: methodCallReplacements [
+
+	^ methodCallReplacements flatCollect: [ :each |
+		(self allCombinationsOfMethodReplacementsWithSelectors: each addedSelectors)
+			collect: [ :methods |
+				DepReplacement new
+					oldMethod: aMethod;
+					newMethods: methods;
+					frequentMethodCallReplacement: each;
+					yourself ] ]
+]
+
+{ #category : #'as yet unclassified' }
+DepReplacementRecommender >> suggestReplacementsFor: aMethod basedOnRefactorings: refactorings [
+
+	| replacementDictionary |
 	
 	replacementDictionary := Dictionary new.
 	
-	aCollectionOfRefactorings do: [ :refactoringChain |
+	refactorings do: [ :refactoringChain |
 		replacementDictionary
 			at: refactoringChain addedMethod signature
 			ifPresent: [ :replacement | replacement refactorings add: refactoringChain ]
@@ -111,26 +164,5 @@ DepReplacementRecommender >> suggestReplacementsFor: aMethod basedOn: aCollectio
 					refactorings: (OrderedCollection with: refactoringChain);
 					yourself ] ].
 			
-	replacements := replacementDictionary values asOrderedCollection.
-	
-	aCollectionOfMethodCallReplacements
-		select: [ :each | each removedSelectors size = 1
-			and: [ each removedSelectors anyOne = aMethod selector ] ]
-		thenDo: [ :each |
-			replacements
-				select: [ :replacement |
-					replacement newMethods first selector = each addedSelectors anyOne ]
-				thenDo: [ :replacement | replacement frequentMethodCallReplacement: each ] ].
-			
-	replacements ifEmpty: [ 
-		replacements := aCollectionOfMethodCallReplacements flatCollect: [ :each |
-			(self allCombinationsOfReplacements: #() withSelectors: each addedSelectors)
-				collect: [ :methods |
-					DepReplacement new
-						oldMethod: aMethod;
-						newMethods: methods;
-						frequentMethodCallReplacement: each;
-						yourself ] ] ].
-			
-	^ replacements
+	^ replacementDictionary values asOrderedCollection.
 ]

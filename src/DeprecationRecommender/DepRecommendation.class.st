@@ -26,7 +26,7 @@ DepRecommendation >> asJsonDictionary [
 	^ {
 		'method' -> method asJsonDictionary .
 		'replacements' -> (replacements collect: [ :each | each asJsonDictionary ]) asArray .
-		'blamedCommitId' -> blamedCommit id .
+		'blamedCommitId' -> (blamedCommit ifNotNil: [ :commit | commit id ] ifNil: [ nil ]) .
 	} asDictionary
 ]
 

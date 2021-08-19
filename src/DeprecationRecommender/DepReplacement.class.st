@@ -10,6 +10,19 @@ Class {
 	#category : #'DeprecationRecommender-Models'
 }
 
+{ #category : #converting }
+DepReplacement >> asJsonDictionary [
+
+	^ { 
+		'oldMethod' -> oldMethod asJsonDictionary .
+		'newMethods' -> (newMethods collect: [ :each | each asJsonDictionary ]) asArray .
+		'refactorings' -> (refactorings collect: [ :each | each asJsonArray ]) asArray .
+		'frequentMethodCallReplacement' -> (frequentMethodCallReplacement
+			ifNotNil: [ :each | each asJsonDictionary ]
+			ifNil: [ nil ])
+	} asDictionary
+]
+
 { #category : #accessing }
 DepReplacement >> frequentMethodCallReplacement [
 
@@ -20,6 +33,12 @@ DepReplacement >> frequentMethodCallReplacement [
 DepReplacement >> frequentMethodCallReplacement: anObject [
 
 	frequentMethodCallReplacement := anObject
+]
+
+{ #category : #initialization }
+DepReplacement >> initialize [
+	super initialize.
+	refactorings := OrderedCollection new.
 ]
 
 { #category : #accessing }
