@@ -8,22 +8,31 @@ Class {
 }
 
 { #category : #'as yet unclassified' }
-DepReplacementRecommender >> candidateReplacementsFor: aMethod [
-	| spy blamedCommit addedMethods metric |
-	spy := DepCommitBlamer in: data.
+DepReplacementRecommender >> allCombinationsOfReplacements: aCollection withSelectors: selectors [
 
-	blamedCommit := spy commitThatRemovedMethod: aMethod.
+	| methodsWithFirstSelector replacements |
+	selectors ifEmpty: [ ^ aCollection ].
 	
-	addedMethods := blamedCommit
-		ifNotNil: [ blamedCommit addedMethods ]
-		ifNil: [ #() ].
+	methodsWithFirstSelector := data newImplementedMethods select: [ :method |
+		method selector = selectors first ].
 	
-	metric := AIShinglesSimilarity
-		slidingWindowSize: 2
-		maxEncodingSize: 10.
+	replacements := aCollection
+		ifEmpty: [ methodsWithFirstSelector collect: [ :each | OrderedCollection with: each ] ]
+		ifNotEmpty: [ 
+			aCollection flatCollect: [ :replacement |
+				methodsWithFirstSelector collect: [ :method |
+					replacement copyWith: method ] ] ].
+		
+	^ self allCombinationsOfReplacements: replacements withSelectors: selectors allButFirst.
 	
-	^ addedMethods select: [ :addedMethod |
-		(metric similarityBetween: addedMethod tokens and: aMethod tokens) >= 0.7 ].
+]
+
+{ #category : #'history search' }
+DepReplacementRecommender >> commitThatRemovedMethod: aMethod [
+
+	| blamer |
+	blamer := DepCommitBlamer in: data.
+	^ blamer commitThatRemovedMethod: aMethod.
 ]
 
 { #category : #accessing }
@@ -39,25 +48,60 @@ DepReplacementRecommender >> data: anObject [
 ]
 
 { #category : #'as yet unclassified' }
+DepReplacementRecommender >> detectRefactoringsThatRemoved: aMethod [
+
+	| strategy |
+		
+	strategy := DepRefactoringDetector new
+		data: data;
+		yourself.
+		
+	^ strategy detectRefactoringsThatRemoved: aMethod.
+]
+
+{ #category : #'as yet unclassified' }
+DepReplacementRecommender >> mineFrequentMethodCallReplacementsFor: aMethod [
+
+	| strategy |
+		
+	strategy := DepMethodCallMiner new
+		data: data;
+		yourself.
+		
+	^ strategy mineFrequentMethodCallReplacementsFor: aMethod.
+]
+
+{ #category : #'as yet unclassified' }
 DepReplacementRecommender >> recommendReplacementsFor: aMethod [
 	
-	| strategy1 strategy2 refactorings methodCallReplacements replacements |
+	| blamedCommit refactorings methodCallReplacements replacements |
 	
-	strategy1 := DepRefactoringDetector new
-		data: data;
-		yourself.
+	blamedCommit := self commitThatRemovedMethod: aMethod.
+	
+	refactorings := self detectRefactoringsThatRemoved: aMethod.
+	methodCallReplacements := self mineFrequentMethodCallReplacementsFor: aMethod.
 		
-	strategy2 := DepMethodCallMiner new
-		data: data;
-		yourself.
+	replacements := self
+		suggestReplacementsFor: aMethod
+		basedOn: refactorings
+		and: methodCallReplacements.
 		
-	refactorings := strategy1 detectRefactoringsThatRemoved: aMethod.
-	methodCallReplacements := strategy2 mineFrequentMethodCallReplacementsFor: aMethod.
+	^ DepRecommendation new
+		method: aMethod;
+		blamedCommit: blamedCommit;
+		replacements: replacements;
+		yourself.
+]
+
+{ #category : #'as yet unclassified' }
+DepReplacementRecommender >> suggestReplacementsFor: aMethod basedOn: aCollectionOfRefactorings and: aCollectionOfMethodCallReplacements [
+
+	| replacementDictionary replacements |
 	
-	replacements := Dictionary new.
+	replacementDictionary := Dictionary new.
 	
-	refactorings do: [ :refactoringChain |
-		replacements
+	aCollectionOfRefactorings do: [ :refactoringChain |
+		replacementDictionary
 			at: refactoringChain addedMethod signature
 			ifPresent: [ :replacement | replacement refactorings add: refactoringChain ]
 			ifAbsentPut: [
@@ -67,9 +111,9 @@ DepReplacementRecommender >> recommendReplacementsFor: aMethod [
 					refactorings: (OrderedCollection with: refactoringChain);
 					yourself ] ].
 			
-	replacements := replacements values.
+	replacements := replacementDictionary values asOrderedCollection.
 	
-	methodCallReplacements
+	aCollectionOfMethodCallReplacements
 		select: [ :each | each removedSelectors size = 1
 			and: [ each removedSelectors anyOne = aMethod selector ] ]
 		thenDo: [ :each |
@@ -77,11 +121,16 @@ DepReplacementRecommender >> recommendReplacementsFor: aMethod [
 				select: [ :replacement |
 					replacement newMethods first selector = each addedSelectors anyOne ]
 				thenDo: [ :replacement | replacement frequentMethodCallReplacement: each ] ].
-		
-	^ DepRecommendation new
-		method: aMethod;
-		refactorings: refactorings;
-		frequentMethodCallReplacements: methodCallReplacements;
-		replacements: replacements;
-		yourself.
+			
+	replacements ifEmpty: [ 
+		replacements := aCollectionOfMethodCallReplacements flatCollect: [ :each |
+			(self allCombinationsOfReplacements: #() withSelectors: each addedSelectors)
+				collect: [ :methods |
+					DepReplacement new
+						oldMethod: aMethod;
+						newMethods: methods;
+						frequentMethodCallReplacement: each;
+						yourself ] ] ].
+			
+	^ replacements
 ]

@@ -4,8 +4,7 @@ Class {
 	#instVars : [
 		'method',
 		'replacements',
-		'refactorings',
-		'frequentMethodCallReplacements'
+		'blamedCommit'
 	],
 	#category : #'DeprecationRecommender-Models'
 }
@@ -17,10 +16,7 @@ DepRecommendation class >> fromJsonDictionary: aDictionary [
 		method: (ClioMethod fromJsonDictionary: (aDictionary at: 'method'));
 		replacements: ((aDictionary at: 'replacements') collect: [ :each |
 			ClioMethod fromJsonDictionary: each ]) asOrderedCollection;
-		refactorings: ((aDictionary at: 'refactorings') collect: [ :each |
-			DepRefactoringChain fromJsonArray: each ]) asOrderedCollection;
-		frequentMethodCallReplacements: ((aDictionary at: 'frequentMethodCallReplacements') collect: [ :each |
-			DepMethodCallReplacement fromJsonDictionary: each ]) asOrderedCollection;
+		blamedCommit: (aDictionary at: 'blamedCommitId');
 		yourself.
 ]
 
@@ -30,21 +26,20 @@ DepRecommendation >> asJsonDictionary [
 	^ {
 		'method' -> method asJsonDictionary .
 		'replacements' -> (replacements collect: [ :each | each asJsonDictionary ]) asArray .
-		'refactorings' -> (refactorings collect: [ :each | each asJsonArray ]) asArray .
-		'frequentMethodCallReplacements'  -> (frequentMethodCallReplacements collect: [ :each | each asJsonDictionary ]) asArray .
+		'blamedCommitId' -> blamedCommit id .
 	} asDictionary
 ]
 
 { #category : #accessing }
-DepRecommendation >> frequentMethodCallReplacements [
+DepRecommendation >> blamedCommit [
 
-	^ frequentMethodCallReplacements
+	^ blamedCommit
 ]
 
 { #category : #accessing }
-DepRecommendation >> frequentMethodCallReplacements: anObject [
+DepRecommendation >> blamedCommit: anObject [
 
-	frequentMethodCallReplacements := anObject
+	blamedCommit := anObject
 ]
 
 { #category : #accessing }
@@ -57,18 +52,6 @@ DepRecommendation >> method [
 DepRecommendation >> method: anObject [
 
 	method := anObject
-]
-
-{ #category : #accessing }
-DepRecommendation >> refactorings [
-
-	^ refactorings
-]
-
-{ #category : #accessing }
-DepRecommendation >> refactorings: anObject [
-
-	refactorings := anObject
 ]
 
 { #category : #accessing }
