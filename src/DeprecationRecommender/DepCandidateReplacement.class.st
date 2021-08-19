@@ -4,21 +4,21 @@ Class {
 	#instVars : [
 		'method',
 		'similarity',
-		'commitId'
+		'commit'
 	],
 	#category : #'DeprecationRecommender-Models'
 }
 
 { #category : #accessing }
-DepCandidateReplacement >> commitId [
+DepCandidateReplacement >> commit [
 
-	^ commitId
+	^ commit
 ]
 
 { #category : #accessing }
-DepCandidateReplacement >> commitId: anObject [
+DepCandidateReplacement >> commit: anObject [
 
-	commitId := anObject
+	commit := anObject
 ]
 
 { #category : #accessing }

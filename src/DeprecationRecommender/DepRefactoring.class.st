@@ -5,8 +5,8 @@ Class {
 		'removedMethod',
 		'addedMethod',
 		'similarity',
-		'removalCommitId',
-		'additionCommitId'
+		'removalCommit',
+		'additionCommit'
 	],
 	#category : #'DeprecationRecommender-Models'
 }
@@ -40,15 +40,15 @@ DepRefactoring >> addedMethod: anObject [
 ]
 
 { #category : #accessing }
-DepRefactoring >> additionCommitId [
+DepRefactoring >> additionCommit [
 
-	^ additionCommitId
+	^ additionCommit
 ]
 
 { #category : #accessing }
-DepRefactoring >> additionCommitId: anObject [
+DepRefactoring >> additionCommit: anObject [
 
-	additionCommitId := anObject
+	additionCommit := anObject
 ]
 
 { #category : #converting }
@@ -59,8 +59,8 @@ DepRefactoring >> asJsonDictionary [
 		'removedMethod' -> removedMethod asJsonDictionary .
 		'addedMethod' -> addedMethod asJsonDictionary .
 		'similarity' -> similarity .
-		'removalCommitId' -> removalCommitId .
-		'additionCommitId' -> additionCommitId
+		'removalCommitId' -> removalCommit id .
+		'additionCommitId' -> additionCommit id
 	} asDictionary
 ]
 
@@ -77,15 +77,15 @@ DepRefactoring >> name [
 ]
 
 { #category : #accessing }
-DepRefactoring >> removalCommitId [
+DepRefactoring >> removalCommit [
 
-	^ removalCommitId
+	^ removalCommit
 ]
 
 { #category : #accessing }
-DepRefactoring >> removalCommitId: anObject [
+DepRefactoring >> removalCommit: anObject [
 
-	removalCommitId := anObject
+	removalCommit := anObject
 ]
 
 { #category : #accessing }
