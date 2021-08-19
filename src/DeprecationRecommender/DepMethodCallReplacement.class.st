@@ -101,6 +101,17 @@ DepMethodCallReplacement >> methodChanges: anObject [
 	methodChanges := anObject
 ]
 
+{ #category : #printing }
+DepMethodCallReplacement >> printOn: aStream [
+
+	aStream
+		nextPut: ${;
+		nextPutAll: (', ' join: removedSelectors);
+		nextPutAll: '} -> {';
+		nextPutAll: (', ' join: addedSelectors);
+		nextPut: $}.
+]
+
 { #category : #accessing }
 DepMethodCallReplacement >> removedSelectors [
 

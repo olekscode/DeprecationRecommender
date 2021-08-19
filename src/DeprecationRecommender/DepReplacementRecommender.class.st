@@ -41,7 +41,7 @@ DepReplacementRecommender >> data: anObject [
 { #category : #'as yet unclassified' }
 DepReplacementRecommender >> recommendReplacementsFor: aMethod [
 	
-	| strategy1 strategy2 refactorings methodCallReplacements |
+	| strategy1 strategy2 refactorings methodCallReplacements replacements |
 	
 	strategy1 := DepRefactoringDetector new
 		data: data;
@@ -53,11 +53,35 @@ DepReplacementRecommender >> recommendReplacementsFor: aMethod [
 		
 	refactorings := strategy1 detectRefactoringsThatRemoved: aMethod.
 	methodCallReplacements := strategy2 mineFrequentMethodCallReplacementsFor: aMethod.
+	
+	replacements := Dictionary new.
+	
+	refactorings do: [ :refactoringChain |
+		replacements
+			at: refactoringChain addedMethod signature
+			ifPresent: [ :replacement | replacement refactorings add: refactoringChain ]
+			ifAbsentPut: [
+				DepReplacement new
+					oldMethod: aMethod;
+					newMethods: (OrderedCollection with: refactoringChain addedMethod);
+					refactorings: (OrderedCollection with: refactoringChain);
+					yourself ] ].
+			
+	replacements := replacements values.
+	
+	methodCallReplacements
+		select: [ :each | each removedSelectors size = 1
+			and: [ each removedSelectors anyOne = aMethod selector ] ]
+		thenDo: [ :each |
+			replacements
+				select: [ :replacement |
+					replacement newMethods first selector = each addedSelectors anyOne ]
+				thenDo: [ :replacement | replacement frequentMethodCallReplacement: each ] ].
 		
 	^ DepRecommendation new
 		method: aMethod;
 		refactorings: refactorings;
 		frequentMethodCallReplacements: methodCallReplacements;
-		replacements: (refactorings collect: [ :each | each addedMethod ]) asSet asOrderedCollection;
+		replacements: replacements;
 		yourself.
 ]
