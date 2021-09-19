@@ -92,35 +92,49 @@ DepReplacementRecommender >> mineFrequentMethodCallReplacementsFor: aMethod [
 
 { #category : #'as yet unclassified' }
 DepReplacementRecommender >> recommendReplacementsFor: aMethod [
-	
+
 	| blamedCommit refactorings methodCallReplacements replacements |
 	
 	blamedCommit := self commitThatRemovedMethod: aMethod.
-	
 	refactorings := self detectRefactoringsThatRemoved: aMethod.
+	
 	methodCallReplacements := self mineFrequentMethodCallReplacementsFor: aMethod.
-		
+	
 	replacements := self
 		suggestReplacementsFor: aMethod
 		basedOn: refactorings
 		and: methodCallReplacements.
 		
-	replacements sort: [ :a :b | a refactorings isNotEmpty
-		and: [ a refactorings anySatisfy: [ :chain |
-				chain size = 1 
-				and: [ chain first class = DepRenameMethodRefactoring ] ] ] ].
+	replacements := self sortReplacements: replacements.
 	
-	replacements sort: [ :a :b | a frequentMethodCallReplacement isNotNil
-		and: [ b frequentMethodCallReplacement isNil
-			or: [ a frequentMethodCallReplacement count > b frequentMethodCallReplacement count
-			and: [ a frequentMethodCallReplacement support > b frequentMethodCallReplacement support
-				and: [ a frequentMethodCallReplacement confidence > b frequentMethodCallReplacement confidence ] ] ] ] ].
-		
 	^ DepRecommendation new
 		method: aMethod;
 		blamedCommit: blamedCommit;
 		replacements: replacements;
 		yourself.
+]
+
+{ #category : #'as yet unclassified' }
+DepReplacementRecommender >> sortReplacements: aCollectionOfReplacements [
+
+	| sortedReplacements |
+
+	"Renamed methods on top"
+	sortedReplacements := aCollectionOfReplacements sorted: [ :a :b | 
+		a refactorings isNotEmpty and: [ 
+			a refactorings anySatisfy: [ :chain | 
+				chain size = 1 and: [ 
+					chain first class = DepRenameMethodRefactoring ] ] ] ].
+
+	"Sort by count, support, and confidence"
+	sortedReplacements := sortedReplacements sorted: [ :a :b | 
+		a frequentMethodCallReplacement isNotNil and: [ 
+			b frequentMethodCallReplacement isNil or: [ 
+				a frequentMethodCallReplacement count > b frequentMethodCallReplacement count and: [ 
+					a frequentMethodCallReplacement support > b frequentMethodCallReplacement support and: [ 
+						a frequentMethodCallReplacement confidence > b frequentMethodCallReplacement confidence ] ] ] ] ].
+	
+	^ sortedReplacements 
 ]
 
 { #category : #'as yet unclassified' }
