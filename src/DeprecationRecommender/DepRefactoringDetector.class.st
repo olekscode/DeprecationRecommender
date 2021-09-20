@@ -43,33 +43,21 @@ DepRefactoringDetector >> candidateReplacementsFor: aMethod in: aCollectionOfCom
 ]
 
 { #category : #'as yet unclassified' }
-DepRefactoringDetector >> detectRefactoringsThatRemoved: aMethod [
+DepRefactoringDetector >> detectRefactoringChainsThatCouldHaveRemoved: aMethod [
 
-	| blamedCommit surroundingCommits candidateReplacements candidateRefactorings refactorings refactoringChains validChains |
+	^ self
+		detectRefactoringChainsThatCouldHaveRemoved: aMethod
+		after: (data commits first datetime - 1 day).
+]
+
+{ #category : #'as yet unclassified' }
+DepRefactoringDetector >> detectRefactoringChainsThatCouldHaveRemoved: aMethod after: aDateAndTime [
+
+	| refactorings refactoringChains validChains |
 	
 	(self canBeAppliedTo: aMethod) ifFalse: [ ^ OrderedCollection new ].
 	
-	blamedCommit := self commitThatRemovedMethod: aMethod.
-	blamedCommit ifNil: [ ^ OrderedCollection new ].
-	
-	surroundingCommits := self commitsSurrounding: blamedCommit.
-	candidateReplacements := self candidateReplacementsFor: aMethod in: surroundingCommits.
-	
-	refactorings := candidateReplacements collect: [ :replacement |
-		candidateRefactorings := self refactoringsList collect: [ :aRefactoringClass |
-			aRefactoringClass new
-				removedMethod: aMethod;
-				addedMethod: replacement method;
-				removalCommit: blamedCommit;
-				additionCommit: replacement commit;
-				similarity: replacement similarity;
-				yourself ].
-			
-		candidateRefactorings
-			detect: [ :each | each canExplainReplacement ]
-			ifNone: [ nil ] ].
-	
-	refactorings := refactorings reject: [ :each | each isNil ].	
+	refactorings := self detectRefactoringsThatCouldHaveRemoved: aMethod after: aDateAndTime.	
 	refactoringChains := refactorings collect: [ :each | DepRefactoringChain with: each ].
 	
 	validChains := OrderedCollection new.
@@ -78,10 +66,48 @@ DepRefactoringDetector >> detectRefactoringsThatRemoved: aMethod [
 		(self isInNewVersion: chain addedMethod)
 			ifTrue: [ validChains add: chain ]
 			ifFalse: [ 
-				(self detectRefactoringsThatRemoved: chain addedMethod) do: [ :chainExtension |
+				(self detectRefactoringChainsThatCouldHaveRemoved: chain addedMethod after: chain last additionCommit datetime) do: [ :chainExtension |
 					validChains add: (chain copyWithAll: chainExtension) ] ] ].
 		
 	^ validChains
+]
+
+{ #category : #'as yet unclassified' }
+DepRefactoringDetector >> detectRefactoringsThatCouldHaveRemoved: aMethod after: aDateAndTime [
+
+	| blamedCommit |
+	
+	blamedCommit := self commitThatRemovedMethod: aMethod.
+	
+	(blamedCommit isNil or: [ blamedCommit datetime <= aDateAndTime ])
+		ifTrue: [ ^ OrderedCollection new ].
+	
+	^ self detectRefactoringsThatCouldHaveRemoved: aMethod inCommit: blamedCommit.
+]
+
+{ #category : #'as yet unclassified' }
+DepRefactoringDetector >> detectRefactoringsThatCouldHaveRemoved: aMethod inCommit: aCommit [
+
+	| surroundingCommits candidateReplacements candidateRefactorings refactorings |
+	
+	surroundingCommits := self commitsSurrounding: aCommit.
+	candidateReplacements := self candidateReplacementsFor: aMethod in: surroundingCommits.
+	
+	refactorings := candidateReplacements collect: [ :replacement |
+		candidateRefactorings := self refactoringsList collect: [ :aRefactoringClass |
+			aRefactoringClass new
+				removedMethod: aMethod;
+				addedMethod: replacement method;
+				removalCommit: aCommit;
+				additionCommit: replacement commit;
+				similarity: replacement similarity;
+				yourself ].
+			
+		candidateRefactorings
+			detect: [ :each | each canExplainReplacement ]
+			ifNone: [ nil ] ].
+	
+	^ refactorings reject: [ :each | each isNil ].	
 ]
 
 { #category : #accessing }

@@ -67,7 +67,7 @@ DepReplacementRecommender >> data: anObject [
 ]
 
 { #category : #'as yet unclassified' }
-DepReplacementRecommender >> detectRefactoringsThatRemoved: aMethod [
+DepReplacementRecommender >> detectRefactoringChainsThatCouldHaveRemoved: aMethod [
 
 	| strategy |
 		
@@ -75,7 +75,7 @@ DepReplacementRecommender >> detectRefactoringsThatRemoved: aMethod [
 		data: data;
 		yourself.
 		
-	^ strategy detectRefactoringsThatRemoved: aMethod.
+	^ strategy detectRefactoringChainsThatCouldHaveRemoved: aMethod.
 ]
 
 { #category : #'as yet unclassified' }
@@ -96,8 +96,8 @@ DepReplacementRecommender >> recommendReplacementsFor: aMethod [
 	| blamedCommit refactorings methodCallReplacements replacements |
 	
 	blamedCommit := self commitThatRemovedMethod: aMethod.
-	refactorings := self detectRefactoringsThatRemoved: aMethod.
 	
+	refactorings := self detectRefactoringChainsThatCouldHaveRemoved: aMethod.
 	methodCallReplacements := self mineFrequentMethodCallReplacementsFor: aMethod.
 	
 	replacements := self
