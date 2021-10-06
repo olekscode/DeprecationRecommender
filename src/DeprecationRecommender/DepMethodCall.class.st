@@ -8,6 +8,24 @@ Class {
 	#category : #'DeprecationRecommender-Models'
 }
 
+{ #category : #'instance creation' }
+DepMethodCall class >> newAdded: aSelector [
+
+	^ self new
+		selector: aSelector;
+		markAsAdded;
+		yourself.
+]
+
+{ #category : #'instance creation' }
+DepMethodCall class >> newRemoved: aSelector [
+
+	^ self new
+		selector: aSelector;
+		markAsRemoved;
+		yourself.
+]
+
 { #category : #comparing }
 DepMethodCall >> < anObject [
 	"TODO: Fix APriori and remove this"

@@ -17,13 +17,16 @@ DepAPriori >> allAssociationRulesFromItemset: anItemset [
 	
 	(key isEmpty or: [ value isEmpty ])
 		ifTrue: [ ^ OrderedCollection new ].
+		
+	(key includes: removedMethod)
+		ifFalse: [ ^ OrderedCollection new ].
 	
 	"We need to get counts of those itemsets"
 	key := frequentItemsets detect: [ :itemsetWithCount |
-			key = itemsetWithCount ].
+		key = itemsetWithCount ].
 	
 	value := frequentItemsets detect: [ :itemsetWithCount |
-			value = itemsetWithCount ].
+		value = itemsetWithCount ].
 	
 	^ { (key => value)
 		parentItemset: anItemset;
@@ -39,9 +42,5 @@ DepAPriori >> removedMethod [
 { #category : #accessing }
 DepAPriori >> removedMethod: anObject [
 
-	removedMethod := anObject.
-	
-	candidateGenerator := DepAPrioriCandidateGenerator new
-		removedMethod: removedMethod;
-		yourself.
+	removedMethod := anObject
 ]
