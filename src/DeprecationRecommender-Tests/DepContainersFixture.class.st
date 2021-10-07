@@ -242,7 +242,7 @@ DepContainersFixture >> oldMethodBaselineOfContainersBaseline [
 			package: ''Containers'';
 			package: ''Containers-Tests'' with: [ spec requires: #(Containers) ] ].'.
 		
-	method methodCalls: { } asOrderedCollection.
+	method methodCalls: #(for:do: package: package:with: requires:) asOrderedCollection.
 	
 	^ method
 ]
@@ -262,7 +262,7 @@ DepContainersFixture >> oldMethodCTArrayAdd [
 
 	contents add: anObject'.
 		
-	method methodCalls: { } asOrderedCollection.
+	method methodCalls: #(add:) asOrderedCollection.
 	
 	^ method
 ]
@@ -282,7 +282,7 @@ DepContainersFixture >> oldMethodCTArrayAsArray [
 
 	^ contents asArray'.
 		
-	method methodCalls: { } asOrderedCollection.
+	method methodCalls: #(asArray) asOrderedCollection.
 	
 	^ method
 ]
@@ -302,7 +302,7 @@ DepContainersFixture >> oldMethodCTArrayAt [
 
 	^ contents at: aNumber'.
 		
-	method methodCalls: { } asOrderedCollection.
+	method methodCalls: #(at:) asOrderedCollection.
 	
 	^ method
 ]
@@ -322,7 +322,7 @@ DepContainersFixture >> oldMethodCTArrayInitialize [
 	super initialize.
 	contents := OrderedCollection new.'.
 		
-	method methodCalls: { } asOrderedCollection.
+	method methodCalls: #(initialize new) asOrderedCollection.
 	
 	^ method
 ]
@@ -342,7 +342,7 @@ DepContainersFixture >> oldMethodCTArrayRemove [
 
 	contents remove: anObject'.
 		
-	method methodCalls: { } asOrderedCollection.
+	method methodCalls: #(remove:) asOrderedCollection.
 	
 	^ method
 ]
@@ -361,7 +361,7 @@ DepContainersFixture >> oldMethodCTArraySize [
 	method sourceCode: 'size 
 	^ contents size'.
 		
-	method methodCalls: { } asOrderedCollection.
+	method methodCalls: #(size) asOrderedCollection.
 	
 	^ method
 ]
@@ -382,7 +382,7 @@ DepContainersFixture >> oldMethodCTArrayTestSetUp [
 	super setUp.
 	container := CTArray new.'.
 		
-	method methodCalls: { } asOrderedCollection.
+	method methodCalls: #(setUp new) asOrderedCollection.
 	
 	^ method
 ]
@@ -402,7 +402,7 @@ DepContainersFixture >> oldMethodCTContainerAdd [
 
 	self subclassResponsibility'.
 		
-	method methodCalls: { } asOrderedCollection.
+	method methodCalls: #(subclassResponsibility) asOrderedCollection.
 	
 	^ method
 ]
@@ -422,7 +422,7 @@ DepContainersFixture >> oldMethodCTContainerAddAll [
 
 	aCollection do: [ :each | self add: each ]'.
 		
-	method methodCalls: { } asOrderedCollection.
+	method methodCalls: #(do: add:) asOrderedCollection.
 	
 	^ method
 ]
@@ -442,7 +442,7 @@ DepContainersFixture >> oldMethodCTContainerAt [
 
 	self subclassResponsibility'.
 		
-	method methodCalls: { } asOrderedCollection.
+	method methodCalls: #(subclassResponsibility) asOrderedCollection.
 	
 	^ method
 ]
@@ -462,7 +462,7 @@ DepContainersFixture >> oldMethodCTContainerIsEmpty [
 
 	^ self size = 0'.
 		
-	method methodCalls: { } asOrderedCollection.
+	method methodCalls: #(= size) asOrderedCollection.
 	
 	^ method
 ]
@@ -482,7 +482,7 @@ DepContainersFixture >> oldMethodCTContainerRemove [
 
 	self subclassResponsibility'.
 		
-	method methodCalls: { } asOrderedCollection.
+	method methodCalls: #(subclassResponsibility) asOrderedCollection.
 	
 	^ method
 ]
@@ -502,7 +502,7 @@ DepContainersFixture >> oldMethodCTContainerSize [
 
 	self subclassResponsibility'.
 		
-	method methodCalls: { } asOrderedCollection.
+	method methodCalls: #(subclassResponsibility) asOrderedCollection.
 	
 	^ method
 ]
@@ -521,8 +521,6 @@ DepContainersFixture >> oldMethodCTLinkNextLink [
 	method sourceCode: 'nextLink
 
 	^ nextLink'.
-		
-	method methodCalls: { } asOrderedCollection.
 	
 	^ method
 ]
@@ -541,8 +539,6 @@ DepContainersFixture >> oldMethodCTLinkSetNextLink [
 	method sourceCode: 'nextLink: anObject
 
 	nextLink := anObject'.
-		
-	method methodCalls: { } asOrderedCollection.
 	
 	^ method
 ]
@@ -561,8 +557,6 @@ DepContainersFixture >> oldMethodCTLinkSetValue [
 	method sourceCode: 'value: anObject
 
 	value := anObject'.
-		
-	method methodCalls: { } asOrderedCollection.
 	
 	^ method
 ]
@@ -581,8 +575,6 @@ DepContainersFixture >> oldMethodCTLinkValue [
 	method sourceCode: 'value
 	
 	^ value'.
-		
-	method methodCalls: { } asOrderedCollection.
 	
 	^ method
 ]
@@ -609,7 +601,7 @@ DepContainersFixture >> oldMethodCTLinkedListAdd [
 	tail nextLink: link.
 	tail := link.'.
 		
-	method methodCalls: { } asOrderedCollection.
+	method methodCalls: #(value: new yourself nextLink:) asOrderedCollection.
 	
 	^ method
 ]
@@ -637,7 +629,7 @@ DepContainersFixture >> oldMethodCTLinkedListAsArray [
 	
 	^ contents asArray'.
 		
-	method methodCalls: { } asOrderedCollection.
+	method methodCalls: #(new nextLink whileFalse: isNil add: value nextLink asArray) asOrderedCollection.
 	
 	^ method
 ]
@@ -666,7 +658,7 @@ DepContainersFixture >> oldMethodCTLinkedListAt [
 	
 	^ current value'.
 		
-	method methodCalls: { } asOrderedCollection.
+	method methodCalls: #(nextLink whileFalse: = ifNil: error: + nextLink value) asOrderedCollection.
 	
 	^ method
 ]
@@ -687,7 +679,7 @@ DepContainersFixture >> oldMethodCTLinkedListInitialize [
 	head := CTLink new.
 	tail := head.'.
 		
-	method methodCalls: { } asOrderedCollection.
+	method methodCalls: #(initialize new) asOrderedCollection.
 	
 	^ method
 ]
@@ -715,7 +707,7 @@ DepContainersFixture >> oldMethodCTLinkedListRemove [
 	
 		current := current nextLink ].'.
 		
-	method methodCalls: { } asOrderedCollection.
+	method methodCalls: #(whileFalse: isNil nextLink ifTrue: = value nextLink nextLink: nextLink nextLink nextLink) asOrderedCollection.
 	
 	^ method
 ]
@@ -743,7 +735,7 @@ DepContainersFixture >> oldMethodCTLinkedListSize [
 	
 	^ count'.
 		
-	method methodCalls: { } asOrderedCollection.
+	method methodCalls: #(whileFalse: = + nextLink) asOrderedCollection.
 	
 	^ method
 ]
@@ -764,7 +756,7 @@ DepContainersFixture >> oldMethodCTLinkedListTestSetUp [
 	super setUp.
 	container := CTLinkedList new.'.
 		
-	method methodCalls: { } asOrderedCollection.
+	method methodCalls: #(setUp new) asOrderedCollection.
 	
 	^ method
 ]
@@ -786,7 +778,7 @@ DepContainersFixture >> oldMethodTContainerTestTestAdd [
 	
 	self assert: container asArray equals: #(1 hello).'.
 		
-	method methodCalls: { } asOrderedCollection.
+	method methodCalls: #(add: add: assert:equals: asArray) asOrderedCollection.
 	
 	^ method
 ]
@@ -806,7 +798,7 @@ DepContainersFixture >> oldMethodTContainerTestTestAddAll [
 	container addAll: #(1 hello).
 	self assert: container asArray equals: #(1 hello).'.
 		
-	method methodCalls: { } asOrderedCollection.
+	method methodCalls: #(addAll: assert:equals: asArray) asOrderedCollection.
 	
 	^ method
 ]
@@ -828,7 +820,7 @@ DepContainersFixture >> oldMethodTContainerTestTestAt [
 	self assert: (container at: 1) equals: 1.
 	self assert: (container at: 2) equals: #hello.'.
 		
-	method methodCalls: { } asOrderedCollection.
+	method methodCalls: #(addAll: assert:equals: at: assert:equals: at:) asOrderedCollection.
 	
 	^ method
 ]
@@ -849,7 +841,7 @@ DepContainersFixture >> oldMethodTContainerTestTestIsEmpty [
 	container add: 1.
 	self deny: container isEmpty.'.
 		
-	method methodCalls: { } asOrderedCollection.
+	method methodCalls: #(assert: isEmpty add: deny: isEmpty) asOrderedCollection.
 	
 	^ method
 ]
@@ -870,7 +862,7 @@ DepContainersFixture >> oldMethodTContainerTestTestRemove [
 	container remove: #hello.
 	self assert: container asArray equals: #(1).'.
 		
-	method methodCalls: { } asOrderedCollection.
+	method methodCalls: #(addAll: remove: assert:equals: asArray) asOrderedCollection.
 	
 	^ method
 ]
@@ -890,7 +882,7 @@ DepContainersFixture >> oldMethodTContainerTestTestSize [
 	container addAll: #(1 hello world).
 	self assert: container size equals: 3.'.
 		
-	method methodCalls: { } asOrderedCollection.
+	method methodCalls: #(addAll: assert:equals: size) asOrderedCollection.
 	
 	^ method
 ]
@@ -909,7 +901,7 @@ DepContainersFixture >> oldMethodTContainerTestTestSizeOfEmpty [
 	method sourceCode: 'testSizeOfEmpty
 	self assert: container size equals: 0'.
 		
-	method methodCalls: { } asOrderedCollection.
+	method methodCalls: #(assert:equals: size) asOrderedCollection.
 	
 	^ method
 ]
