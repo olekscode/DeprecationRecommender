@@ -10,26 +10,30 @@ Class {
 { #category : #recommendation }
 DepBreakingChangeDetector >> breakingChangeMethods [
 	
-	| projectClassNames breakingSelectors methods |
+	| missingMethods systemClass instanceSideSelectors classSideSelectors missingPublicMethods |
 	
-	projectClassNames := data oldClasses collect: [ :each | each name ].
+	missingMethods := data oldClasses flatCollect: [ :aClass |
+		systemClass := self findActualClass: aClass.
+		
+		instanceSideSelectors := self instanceSideSelectorsUnderstoodBy: systemClass.
+		classSideSelectors := self classSideSelectorsUnderstoodBy: systemClass.
+		
+		aClass methods reject: [ :method |
+			method isClassSide
+				ifTrue: [ classSideSelectors includes: method selector ]
+				ifFalse: [ instanceSideSelectors includes: method selector ] ] ].
 	
-	breakingSelectors := self deletedSupportedSelectors select: [ :each |
-		projectClassNames includes: each implementorClassName ].
-	
-	methods := breakingSelectors collect: [ :selector |
-		data oldImplementedMethods detect: [ :method |
-			(method name = selector name) and: [ 
-				(method methodClass name = selector implementorClassName) and: [ 
-					method isClassSide = selector isClassSide ] ] ] ].
-	
-	methods := methods select: [ :method |
+	missingPublicMethods := missingMethods select: [ :method |
 		VisibilityDeductor new isMethodPublic: method ].
 	
-	methods := methods reject: [ :method |
+	^ missingPublicMethods asSet reject: [ :method |
 		method isAbstract or: [ method isEmpty ] ].
-	
-	^ methods asSet
+]
+
+{ #category : #'as yet unclassified' }
+DepBreakingChangeDetector >> classSideSelectorsUnderstoodBy: aClass [
+	"Find all class side selectors that are understood by this class (implemented by it or by its superclasses). aClass must be an actual class in the image"
+	^ aClass class allMethods collect: [ :each | each selector ]
 ]
 
 { #category : #accessing }
@@ -78,4 +82,16 @@ DepBreakingChangeDetector >> deletedSupportedSelectors [
 	
 	^ deletedSignatures asOrderedCollection collect: [ :each |
 		oldSelectorDictionary at: each ]
+]
+
+{ #category : #'as yet unclassified' }
+DepBreakingChangeDetector >> findActualClass: aClass [
+	"Locate aClass in the image (the version of a project that is currently loaded)"
+	^ self class environment at: aClass name asSymbol
+]
+
+{ #category : #'as yet unclassified' }
+DepBreakingChangeDetector >> instanceSideSelectorsUnderstoodBy: aClass [
+	"Find all instance side selectors that are understood by this class (implemented by it or by its superclasses). aClass must be an actual class in the image"
+	^ aClass allMethods collect: [ :each | each selector ]
 ]
