@@ -55,7 +55,7 @@ DepContainersFixture >> initializeOldPackages [
 	} asOrderedCollection
 ]
 
-{ #category : #'old source code' }
+{ #category : #'old source code - classes' }
 DepContainersFixture >> oldClassBaselineOfContainers [
 
 	| aClass |
@@ -69,10 +69,11 @@ DepContainersFixture >> oldClassBaselineOfContainers [
 		self oldMethodBaselineOfContainersBaseline
 	} asOrderedCollection.
 	
+	aClass methods do: [ :method | method methodClass: aClass ].
 	^ aClass
 ]
 
-{ #category : #'old source code' }
+{ #category : #'old source code - classes' }
 DepContainersFixture >> oldClassCTArray [
 
 	| aClass |
@@ -82,12 +83,20 @@ DepContainersFixture >> oldClassCTArray [
 		superclassName: 'CTContainer';
 		yourself.
 	
-	aClass methods: { } asOrderedCollection.
+	aClass methods: {
+		self oldMethodCTArrayAdd .
+		self oldMethodCTArrayAt .
+		self oldMethodCTArrayRemove .
+		self oldMethodCTArraySize .
+		self oldMethodCTArrayAsArray .
+		self oldMethodCTArrayInitialize
+	} asOrderedCollection.
 	
+	aClass methods do: [ :method | method methodClass: aClass ].
 	^ aClass
 ]
 
-{ #category : #'old source code' }
+{ #category : #'old source code - classes' }
 DepContainersFixture >> oldClassCTArrayTest [
 
 	| aClass |
@@ -97,12 +106,15 @@ DepContainersFixture >> oldClassCTArrayTest [
 		superclassName: 'TestCase';
 		yourself.
 	
-	aClass methods: { } asOrderedCollection.
+	aClass methods: {
+		self oldMethodCTArrayTestSetUp
+	} asOrderedCollection.
 	
+	aClass methods do: [ :method | method methodClass: aClass ].
 	^ aClass
 ]
 
-{ #category : #'old source code' }
+{ #category : #'old source code - classes' }
 DepContainersFixture >> oldClassCTContainer [
 
 	| aClass |
@@ -112,12 +124,20 @@ DepContainersFixture >> oldClassCTContainer [
 		superclassName: 'Object';
 		yourself.
 	
-	aClass methods: { } asOrderedCollection.
+	aClass methods: {
+		self oldMethodCTContainerIsEmpty .
+		self oldMethodCTContainerAt .
+		self oldMethodCTContainerAddAll .
+		self oldMethodCTContainerAdd .
+		self oldMethodCTContainerSize .
+		self oldMethodCTContainerRemove
+	} asOrderedCollection.
 	
+	aClass methods do: [ :method | method methodClass: aClass ].
 	^ aClass
 ]
 
-{ #category : #'old source code' }
+{ #category : #'old source code - classes' }
 DepContainersFixture >> oldClassCTLink [
 
 	| aClass |
@@ -127,12 +147,18 @@ DepContainersFixture >> oldClassCTLink [
 		superclassName: 'Object';
 		yourself.
 	
-	aClass methods: { } asOrderedCollection.
+	aClass methods: {
+		self oldMethodCTLinkValue .
+		self oldMethodCTLinkSetValue .
+		self oldMethodCTLinkNextLink .
+		self oldMethodCTLinkSetNextLink
+	} asOrderedCollection.
 	
+	aClass methods do: [ :method | method methodClass: aClass ].
 	^ aClass
 ]
 
-{ #category : #'old source code' }
+{ #category : #'old source code - classes' }
 DepContainersFixture >> oldClassCTLinkedList [
 
 	| aClass |
@@ -142,12 +168,20 @@ DepContainersFixture >> oldClassCTLinkedList [
 		superclassName: 'CTContainer';
 		yourself.
 	
-	aClass methods: { } asOrderedCollection.
+	aClass methods: {
+		self oldMethodCTLinkedListAdd .
+		self oldMethodCTLinkedListSize .
+		self oldMethodCTLinkedListAt .
+		self oldMethodCTLinkedListInitialize .
+		self oldMethodCTLinkedListAsArray .
+		self oldMethodCTLinkedListRemove
+	} asOrderedCollection.
 	
+	aClass methods do: [ :method | method methodClass: aClass ].
 	^ aClass
 ]
 
-{ #category : #'old source code' }
+{ #category : #'old source code - classes' }
 DepContainersFixture >> oldClassCTLinkedListTest [
 
 	| aClass |
@@ -157,12 +191,15 @@ DepContainersFixture >> oldClassCTLinkedListTest [
 		superclassName: 'TestCase';
 		yourself.
 	
-	aClass methods: { } asOrderedCollection.
+	aClass methods: {
+		self oldMethodCTLinkedListTestSetUp
+	} asOrderedCollection.
 	
+	aClass methods do: [ :method | method methodClass: aClass ].
 	^ aClass
 ]
 
-{ #category : #'old source code' }
+{ #category : #'old source code - classes' }
 DepContainersFixture >> oldClassTContainerTests [
 
 	| aClass |
@@ -172,12 +209,21 @@ DepContainersFixture >> oldClassTContainerTests [
 		isTrait: true;
 		yourself.
 	
-	aClass methods: { } asOrderedCollection.
+	aClass methods: {
+		self oldMethodTContainerTestTestIsEmpty .
+		self oldMethodTContainerTestTestRemove .
+		self oldMethodTContainerTestTestSizeOfEmpty .
+		self oldMethodTContainerTestTestAdd .
+		self oldMethodTContainerTestTestAddAll .
+		self oldMethodTContainerTestTestAt .
+		self oldMethodTContainerTestTestSize
+	} asOrderedCollection.
 	
+	aClass methods do: [ :method | method methodClass: aClass ].
 	^ aClass
 ]
 
-{ #category : #'old source code' }
+{ #category : #'old source code - methods' }
 DepContainersFixture >> oldMethodBaselineOfContainersBaseline [
 
 	| method |
@@ -201,7 +247,674 @@ DepContainersFixture >> oldMethodBaselineOfContainersBaseline [
 	^ method
 ]
 
-{ #category : #'old source code' }
+{ #category : #'old source code - methods' }
+DepContainersFixture >> oldMethodCTArrayAdd [
+
+	| method |
+	
+	method := ClioMethod new
+		name: 'add:';
+		className: 'CTArray';
+		protocol: 'adding';
+		yourself.
+		
+	method sourceCode: 'add: anObject
+
+	contents add: anObject'.
+		
+	method methodCalls: { } asOrderedCollection.
+	
+	^ method
+]
+
+{ #category : #'old source code - methods' }
+DepContainersFixture >> oldMethodCTArrayAsArray [
+
+	| method |
+	
+	method := ClioMethod new
+		name: 'asArray';
+		className: 'CTArray';
+		protocol: 'converting';
+		yourself.
+		
+	method sourceCode: 'asArray 
+
+	^ contents asArray'.
+		
+	method methodCalls: { } asOrderedCollection.
+	
+	^ method
+]
+
+{ #category : #'old source code - methods' }
+DepContainersFixture >> oldMethodCTArrayAt [
+
+	| method |
+	
+	method := ClioMethod new
+		name: 'at:';
+		className: 'CTArray';
+		protocol: 'adding';
+		yourself.
+		
+	method sourceCode: 'at: aNumber
+
+	^ contents at: aNumber'.
+		
+	method methodCalls: { } asOrderedCollection.
+	
+	^ method
+]
+
+{ #category : #'old source code - methods' }
+DepContainersFixture >> oldMethodCTArrayInitialize [
+
+	| method |
+	
+	method := ClioMethod new
+		name: 'initialize';
+		className: 'CTArray';
+		protocol: 'initialization';
+		yourself.
+		
+	method sourceCode: 'initialize
+	super initialize.
+	contents := OrderedCollection new.'.
+		
+	method methodCalls: { } asOrderedCollection.
+	
+	^ method
+]
+
+{ #category : #'old source code - methods' }
+DepContainersFixture >> oldMethodCTArrayRemove [
+
+	| method |
+	
+	method := ClioMethod new
+		name: 'remove:';
+		className: 'CTArray';
+		protocol: 'adding';
+		yourself.
+		
+	method sourceCode: 'remove: anObject
+
+	contents remove: anObject'.
+		
+	method methodCalls: { } asOrderedCollection.
+	
+	^ method
+]
+
+{ #category : #'old source code - methods' }
+DepContainersFixture >> oldMethodCTArraySize [
+
+	| method |
+	
+	method := ClioMethod new
+		name: 'size';
+		className: 'CTArray';
+		protocol: 'accessing';
+		yourself.
+		
+	method sourceCode: 'size 
+	^ contents size'.
+		
+	method methodCalls: { } asOrderedCollection.
+	
+	^ method
+]
+
+{ #category : #'old source code - methods' }
+DepContainersFixture >> oldMethodCTArrayTestSetUp [
+
+	| method |
+	
+	method := ClioMethod new
+		name: 'setUp';
+		className: 'CTArrayTest';
+		protocol: 'initialization';
+		yourself.
+		
+	method sourceCode: 'setUp
+
+	super setUp.
+	container := CTArray new.'.
+		
+	method methodCalls: { } asOrderedCollection.
+	
+	^ method
+]
+
+{ #category : #'old source code - methods' }
+DepContainersFixture >> oldMethodCTContainerAdd [
+
+	| method |
+	
+	method := ClioMethod new
+		name: 'add:';
+		className: 'CTContainer';
+		protocol: 'adding';
+		yourself.
+		
+	method sourceCode: 'add: anObject
+
+	self subclassResponsibility'.
+		
+	method methodCalls: { } asOrderedCollection.
+	
+	^ method
+]
+
+{ #category : #'old source code - methods' }
+DepContainersFixture >> oldMethodCTContainerAddAll [
+
+	| method |
+	
+	method := ClioMethod new
+		name: 'addAll:';
+		className: 'CTContainer';
+		protocol: 'adding';
+		yourself.
+		
+	method sourceCode: 'addAll: aCollection
+
+	aCollection do: [ :each | self add: each ]'.
+		
+	method methodCalls: { } asOrderedCollection.
+	
+	^ method
+]
+
+{ #category : #'old source code - methods' }
+DepContainersFixture >> oldMethodCTContainerAt [
+
+	| method |
+	
+	method := ClioMethod new
+		name: 'at:';
+		className: 'CTContainer';
+		protocol: 'adding';
+		yourself.
+		
+	method sourceCode: 'at: aNumber
+
+	self subclassResponsibility'.
+		
+	method methodCalls: { } asOrderedCollection.
+	
+	^ method
+]
+
+{ #category : #'old source code - methods' }
+DepContainersFixture >> oldMethodCTContainerIsEmpty [
+
+	| method |
+	
+	method := ClioMethod new
+		name: 'isEmpty';
+		className: 'CTContainer';
+		protocol: 'adding';
+		yourself.
+		
+	method sourceCode: 'isEmpty
+
+	^ self size = 0'.
+		
+	method methodCalls: { } asOrderedCollection.
+	
+	^ method
+]
+
+{ #category : #'old source code - methods' }
+DepContainersFixture >> oldMethodCTContainerRemove [
+
+	| method |
+	
+	method := ClioMethod new
+		name: 'remove:';
+		className: 'CTContainer';
+		protocol: 'adding';
+		yourself.
+		
+	method sourceCode: 'remove: anObject
+
+	self subclassResponsibility'.
+		
+	method methodCalls: { } asOrderedCollection.
+	
+	^ method
+]
+
+{ #category : #'old source code - methods' }
+DepContainersFixture >> oldMethodCTContainerSize [
+
+	| method |
+	
+	method := ClioMethod new
+		name: 'size';
+		className: 'CTContainer';
+		protocol: 'adding';
+		yourself.
+		
+	method sourceCode: 'size
+
+	self subclassResponsibility'.
+		
+	method methodCalls: { } asOrderedCollection.
+	
+	^ method
+]
+
+{ #category : #'old source code - methods' }
+DepContainersFixture >> oldMethodCTLinkNextLink [
+
+	| method |
+	
+	method := ClioMethod new
+		name: 'nextLink';
+		className: 'CTLink';
+		protocol: 'accessing';
+		yourself.
+		
+	method sourceCode: 'nextLink
+
+	^ nextLink'.
+		
+	method methodCalls: { } asOrderedCollection.
+	
+	^ method
+]
+
+{ #category : #'old source code - methods' }
+DepContainersFixture >> oldMethodCTLinkSetNextLink [
+
+	| method |
+	
+	method := ClioMethod new
+		name: 'nextLink:';
+		className: 'CTLink';
+		protocol: 'accessing';
+		yourself.
+		
+	method sourceCode: 'nextLink: anObject
+
+	nextLink := anObject'.
+		
+	method methodCalls: { } asOrderedCollection.
+	
+	^ method
+]
+
+{ #category : #'old source code - methods' }
+DepContainersFixture >> oldMethodCTLinkSetValue [
+
+	| method |
+	
+	method := ClioMethod new
+		name: 'value:';
+		className: 'CTLink';
+		protocol: 'accessing';
+		yourself.
+		
+	method sourceCode: 'value: anObject
+
+	value := anObject'.
+		
+	method methodCalls: { } asOrderedCollection.
+	
+	^ method
+]
+
+{ #category : #'old source code - methods' }
+DepContainersFixture >> oldMethodCTLinkValue [
+
+	| method |
+	
+	method := ClioMethod new
+		name: 'value';
+		className: 'CTLink';
+		protocol: 'accessing';
+		yourself.
+		
+	method sourceCode: 'value
+	
+	^ value'.
+		
+	method methodCalls: { } asOrderedCollection.
+	
+	^ method
+]
+
+{ #category : #'old source code - methods' }
+DepContainersFixture >> oldMethodCTLinkedListAdd [
+
+	| method |
+	
+	method := ClioMethod new
+		name: 'add:';
+		className: 'CTLinkedList';
+		protocol: 'adding';
+		yourself.
+		
+	method sourceCode: 'add: anObject
+
+	| link |
+	
+	link := CTLink new
+		value: anObject;
+		yourself.
+		
+	tail nextLink: link.
+	tail := link.'.
+		
+	method methodCalls: { } asOrderedCollection.
+	
+	^ method
+]
+
+{ #category : #'old source code - methods' }
+DepContainersFixture >> oldMethodCTLinkedListAsArray [
+
+	| method |
+	
+	method := ClioMethod new
+		name: 'asArray';
+		className: 'CTLinkedList';
+		protocol: 'adding';
+		yourself.
+		
+	method sourceCode: 'asArray
+
+	| contents current |
+	contents := OrderedCollection new.
+	current := head nextLink.
+	
+	[ current isNil ] whileFalse: [ 
+		contents add: current value.
+		current := current nextLink ].
+	
+	^ contents asArray'.
+		
+	method methodCalls: { } asOrderedCollection.
+	
+	^ method
+]
+
+{ #category : #'old source code - methods' }
+DepContainersFixture >> oldMethodCTLinkedListAt [
+
+	| method |
+	
+	method := ClioMethod new
+		name: 'at:';
+		className: 'CTLinkedList';
+		protocol: 'adding';
+		yourself.
+		
+	method sourceCode: 'at: aNumber
+
+	| index current |
+	index := 1.
+	current := head nextLink.
+	
+	[ index = aNumber ] whileFalse: [ 
+		current ifNil: [ self error: ''Overflow'' ].
+		index := index + 1.
+		current := current nextLink ].
+	
+	^ current value'.
+		
+	method methodCalls: { } asOrderedCollection.
+	
+	^ method
+]
+
+{ #category : #'old source code - methods' }
+DepContainersFixture >> oldMethodCTLinkedListInitialize [
+
+	| method |
+	
+	method := ClioMethod new
+		name: 'initialize';
+		className: 'CTLinkedList';
+		protocol: 'initialization';
+		yourself.
+		
+	method sourceCode: 'initialize
+	super initialize.
+	head := CTLink new.
+	tail := head.'.
+		
+	method methodCalls: { } asOrderedCollection.
+	
+	^ method
+]
+
+{ #category : #'old source code - methods' }
+DepContainersFixture >> oldMethodCTLinkedListRemove [
+
+	| method |
+	
+	method := ClioMethod new
+		name: 'remove:';
+		className: 'CTLinkedList';
+		protocol: 'adding';
+		yourself.
+		
+	method sourceCode: 'remove: anObject
+
+	| current |
+	current := head.
+	
+	[ current nextLink isNil ] whileFalse: [
+		current nextLink value = anObject ifTrue: [ 
+			current nextLink: current nextLink nextLink.
+			^ anObject ].
+	
+		current := current nextLink ].'.
+		
+	method methodCalls: { } asOrderedCollection.
+	
+	^ method
+]
+
+{ #category : #'old source code - methods' }
+DepContainersFixture >> oldMethodCTLinkedListSize [
+
+	| method |
+	
+	method := ClioMethod new
+		name: 'size';
+		className: 'CTLinkedList';
+		protocol: 'accessing';
+		yourself.
+		
+	method sourceCode: 'size
+	
+	| count current |
+	count := 0.
+	current := head.
+	
+	[ current = tail ] whileFalse: [ 
+		count := count + 1.
+		current := current nextLink ].
+	
+	^ count'.
+		
+	method methodCalls: { } asOrderedCollection.
+	
+	^ method
+]
+
+{ #category : #'old source code - methods' }
+DepContainersFixture >> oldMethodCTLinkedListTestSetUp [
+
+	| method |
+	
+	method := ClioMethod new
+		name: 'setUp';
+		className: 'CTLinkedListTest';
+		protocol: 'initialization';
+		yourself.
+		
+	method sourceCode: 'setUp
+
+	super setUp.
+	container := CTLinkedList new.'.
+		
+	method methodCalls: { } asOrderedCollection.
+	
+	^ method
+]
+
+{ #category : #'old source code - methods' }
+DepContainersFixture >> oldMethodTContainerTestTestAdd [
+
+	| method |
+	
+	method := ClioMethod new
+		name: 'testAdd';
+		className: 'TContainerTest';
+		protocol: 'tests';
+		yourself.
+		
+	method sourceCode: 'testAdd
+	container add: 1.
+	container add: #hello.
+	
+	self assert: container asArray equals: #(1 hello).'.
+		
+	method methodCalls: { } asOrderedCollection.
+	
+	^ method
+]
+
+{ #category : #'old source code - methods' }
+DepContainersFixture >> oldMethodTContainerTestTestAddAll [
+
+	| method |
+	
+	method := ClioMethod new
+		name: 'testAddAll';
+		className: 'TContainerTest';
+		protocol: 'tests';
+		yourself.
+		
+	method sourceCode: 'testAddAll
+	container addAll: #(1 hello).
+	self assert: container asArray equals: #(1 hello).'.
+		
+	method methodCalls: { } asOrderedCollection.
+	
+	^ method
+]
+
+{ #category : #'old source code - methods' }
+DepContainersFixture >> oldMethodTContainerTestTestAt [
+
+	| method |
+	
+	method := ClioMethod new
+		name: 'testAt';
+		className: 'TContainerTest';
+		protocol: 'tests';
+		yourself.
+		
+	method sourceCode: 'testAt
+	container addAll: #(1 hello).
+	
+	self assert: (container at: 1) equals: 1.
+	self assert: (container at: 2) equals: #hello.'.
+		
+	method methodCalls: { } asOrderedCollection.
+	
+	^ method
+]
+
+{ #category : #'old source code - methods' }
+DepContainersFixture >> oldMethodTContainerTestTestIsEmpty [
+
+	| method |
+	
+	method := ClioMethod new
+		name: 'testIsEmpty';
+		className: 'TContainerTest';
+		protocol: 'tests';
+		yourself.
+		
+	method sourceCode: 'testIsEmpty
+	self assert: container isEmpty.
+	container add: 1.
+	self deny: container isEmpty.'.
+		
+	method methodCalls: { } asOrderedCollection.
+	
+	^ method
+]
+
+{ #category : #'old source code - methods' }
+DepContainersFixture >> oldMethodTContainerTestTestRemove [
+
+	| method |
+	
+	method := ClioMethod new
+		name: 'testRemove';
+		className: 'TContainerTest';
+		protocol: 'tests';
+		yourself.
+		
+	method sourceCode: 'testRemove
+	container addAll: #(1 hello).
+	container remove: #hello.
+	self assert: container asArray equals: #(1).'.
+		
+	method methodCalls: { } asOrderedCollection.
+	
+	^ method
+]
+
+{ #category : #'old source code - methods' }
+DepContainersFixture >> oldMethodTContainerTestTestSize [
+
+	| method |
+	
+	method := ClioMethod new
+		name: 'testSize';
+		className: 'TContainerTest';
+		protocol: 'tests';
+		yourself.
+		
+	method sourceCode: 'testSize
+	container addAll: #(1 hello world).
+	self assert: container size equals: 3.'.
+		
+	method methodCalls: { } asOrderedCollection.
+	
+	^ method
+]
+
+{ #category : #'old source code - methods' }
+DepContainersFixture >> oldMethodTContainerTestTestSizeOfEmpty [
+
+	| method |
+	
+	method := ClioMethod new
+		name: 'testSizeOfEmpty';
+		className: 'TContainerTest';
+		protocol: 'tests';
+		yourself.
+		
+	method sourceCode: 'testSizeOfEmpty
+	self assert: container size equals: 0'.
+		
+	method methodCalls: { } asOrderedCollection.
+	
+	^ method
+]
+
+{ #category : #'old source code - packages' }
 DepContainersFixture >> oldPackageBaselineOfContainers [
 
 	| package |
@@ -215,7 +928,7 @@ DepContainersFixture >> oldPackageBaselineOfContainers [
 	^ package
 ]
 
-{ #category : #'old source code' }
+{ #category : #'old source code - packages' }
 DepContainersFixture >> oldPackageContainers [
 
 	| package |
@@ -232,7 +945,7 @@ DepContainersFixture >> oldPackageContainers [
 	^ package
 ]
 
-{ #category : #'old source code' }
+{ #category : #'old source code - packages' }
 DepContainersFixture >> oldPackageContainersTests [
 
 	| package |
