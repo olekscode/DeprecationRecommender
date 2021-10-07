@@ -8,38 +8,30 @@ Class {
 DepMethodCallMiner >> extractAddedMethodCallsFrom: aMethodModification [
 	"Added method call is relevant if it is present in the new version of a library"
 	
-	| oldMethodCalls newMethodCalls oldSelectors newSelectors addedSelectors |
+	| oldSelectors newSelectors addedSelectors |
 	
-	oldMethodCalls := aMethodModification oldDefinition methodCalls asSet.
-	newMethodCalls := aMethodModification newDefinition methodCalls asSet.
-	
-	oldSelectors := oldMethodCalls collect: [ :each | each selector ].
-	newSelectors := newMethodCalls collect: [ :each | each selector ].
+	oldSelectors := aMethodModification oldDefinition methodCalls asSet.
+	newSelectors := aMethodModification newDefinition methodCalls asSet.
 	
 	addedSelectors := newSelectors difference: oldSelectors.
 	
-	^ newMethodCalls asOrderedCollection select: [ :methodCall |
-		(addedSelectors includes: methodCall selector) and: [ 
-			newVersionSelectors includes: methodCall selector ] ].
+	^ addedSelectors asOrderedCollection select: [ :each |
+		newVersionSelectors includes: each ].
 ]
 
 { #category : #'as yet unclassified' }
 DepMethodCallMiner >> extractRemovedMethodCallsFrom: aMethodModification [
 	"Removed method call is relevant if it was present in the old version of a library"
 	
-	| oldMethodCalls newMethodCalls oldSelectors newSelectors removedSelectors |
+	| oldSelectors newSelectors removedSelectors |
 	
-	oldMethodCalls := aMethodModification oldDefinition methodCalls asSet.
-	newMethodCalls := aMethodModification newDefinition methodCalls asSet.
-	
-	oldSelectors := oldMethodCalls collect: [ :each | each selector ].
-	newSelectors := newMethodCalls collect: [ :each | each selector ].
+	oldSelectors := aMethodModification oldDefinition methodCalls asSet.
+	newSelectors := aMethodModification newDefinition methodCalls asSet.
 	
 	removedSelectors := oldSelectors difference: newSelectors.
 	
-	^ oldMethodCalls asOrderedCollection select: [ :methodCall |
-		(removedSelectors includes: methodCall selector) and: [ 
-			oldVersionSelectors includes: methodCall selector ] ].
+	^ removedSelectors asOrderedCollection select: [ :each |
+		oldVersionSelectors includes: each ].
 ]
 
 { #category : #'as yet unclassified' }
@@ -61,13 +53,10 @@ DepMethodCallMiner >> methodChangesThatRemoveCallsTo: aMethod [
 				addedMethodCalls: (self extractAddedMethodCallsFrom: modification);
 				yourself ] ].
 	
-	methodChanges select: [ :each |
-		each addedMethodCalls isNotEmpty ].
-	
 	^ methodChanges select: [ :each |
 		each addedMethodCalls isNotEmpty and: [
 			each removedMethodCalls anySatisfy: [ :methodCall |
-				methodCall selector = aMethod selector ] ] ].
+				methodCall = aMethod selector ] ] ].
 ]
 
 { #category : #accessing }

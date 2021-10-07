@@ -15,11 +15,8 @@ DepMethodChange class >> fromJsonDictionary: aDictionary [
 
 	| removedMethodCalls addedMethodCalls |
 	
-	removedMethodCalls := ((aDictionary at: 'removedMethodCalls') collect: [ :each |
-		ClioMethodCall fromJsonDictionary: each ]) asOrderedCollection.
-	
-	addedMethodCalls := ((aDictionary at: 'addedMethodCalls') collect: [ :each |
-		ClioMethodCall fromJsonDictionary: each ]) asOrderedCollection.
+	removedMethodCalls := (aDictionary at: 'removedMethodCalls') asOrderedCollection.
+	addedMethodCalls := (aDictionary at: 'addedMethodCalls') asOrderedCollection.
 	
 	^ self new
 		signature: (aDictionary at: 'signature');
