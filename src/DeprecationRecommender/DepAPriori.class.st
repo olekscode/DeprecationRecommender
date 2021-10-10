@@ -18,7 +18,7 @@ DepAPriori >> allAssociationRulesFromItemset: anItemset [
 	(key isEmpty or: [ value isEmpty ])
 		ifTrue: [ ^ OrderedCollection new ].
 		
-	(key includes: removedMethod)
+	(key anySatisfy: [ :each | each selector = removedMethod selector ])
 		ifFalse: [ ^ OrderedCollection new ].
 	
 	"We need to get counts of those itemsets"

@@ -154,7 +154,7 @@ DepReplacementRecommender >> suggestReplacementsFor: aMethod basedOn: refactorin
 		replacements := self
 			suggestReplacementsFor: aMethod
 			basedOnMethodCallReplacements: methodCallReplacements ].
-			
+
 	^ replacements
 ]
 

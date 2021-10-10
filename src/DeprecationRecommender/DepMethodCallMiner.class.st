@@ -114,10 +114,10 @@ DepMethodCallMiner >> mineFrequentMethodCallReplacementsFor: aMethod [
 		replacement methodChanges: (methodChanges select: [ :methodChange |
 			(replacement removedSelectors allSatisfy: [ :selector |
 				methodChange removedMethodCalls anySatisfy: [ :methodCall |
-					methodCall selector = selector ] ]) and: [ 
+					methodCall = selector ] ]) and: [ 
 			(replacement addedSelectors allSatisfy: [ :selector |
 				methodChange addedMethodCalls anySatisfy: [ :methodCall |
-					methodCall selector = selector ] ]) ] ]) ].
+					methodCall = selector ] ]) ] ]) ].
 	
 	^ replacements
 ]
