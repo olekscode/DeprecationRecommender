@@ -7,33 +7,25 @@ Class {
 	#category : #'DeprecationRecommender-Controllers'
 }
 
+{ #category : #'instance creation' }
+DepBreakingChangeDetector class >> in: aData [
+
+	^ self new 
+		data: aData;
+		yourself
+]
+
 { #category : #recommendation }
 DepBreakingChangeDetector >> breakingChangeMethods [
 	
-	| missingMethods systemClass instanceSideSelectors classSideSelectors missingPublicMethods |
+	| missingMethods |
+	missingMethods := self missingMethods.
 	
-	missingMethods := data oldClasses flatCollect: [ :aClass |
-		systemClass := self findActualClass: aClass.
-		
-		instanceSideSelectors := self instanceSideSelectorsUnderstoodBy: systemClass.
-		classSideSelectors := self classSideSelectorsUnderstoodBy: systemClass.
-		
-		aClass methods reject: [ :method |
-			method isClassSide
-				ifTrue: [ classSideSelectors includes: method selector ]
-				ifFalse: [ instanceSideSelectors includes: method selector ] ] ].
-	
-	missingPublicMethods := missingMethods select: [ :method |
+	missingMethods := missingMethods select: [ :method |
 		VisibilityDeductor new isMethodPublic: method ].
 	
-	^ missingPublicMethods asSet reject: [ :method |
+	^ missingMethods asSet reject: [ :method |
 		method isAbstract or: [ method isEmpty ] ].
-]
-
-{ #category : #'as yet unclassified' }
-DepBreakingChangeDetector >> classSideSelectorsUnderstoodBy: aClass [
-	"Find all class side selectors that are understood by this class (implemented by it or by its superclasses). aClass must be an actual class in the image"
-	^ aClass class allMethods collect: [ :each | each selector ]
 ]
 
 { #category : #accessing }
@@ -42,46 +34,10 @@ DepBreakingChangeDetector >> data: anObject [
 	data := anObject
 ]
 
-{ #category : #private }
-DepBreakingChangeDetector >> deletedPublicClasses [
-	| oldPublicClasses newPublicClasses oldClassDictionary oldNames newNames deletedNames |
-	
-	oldPublicClasses := data oldClasses select: [ :each |
-		VisibilityDeductor new isClassPublic: each ].
-	
-	newPublicClasses := data newClasses select: [ :each |
-		VisibilityDeductor new isClassPublic: each ].
-	
-	oldClassDictionary := Dictionary new.
-	
-	oldPublicClasses do: [ :each |
-		oldClassDictionary at: each name ifAbsentPut: each ].
-	
-	oldNames := oldClassDictionary keys asSet.
-	newNames := (newPublicClasses collect: [ :each | each name ]) asSet.
-	
-	deletedNames := oldNames difference: newNames.
-	
-	^ deletedNames asOrderedCollection collect: [ :each |
-		oldClassDictionary at: each ]
-]
+{ #category : #testing }
+DepBreakingChangeDetector >> doesClassExistInNewVersion: aClass [
 
-{ #category : #private }
-DepBreakingChangeDetector >> deletedSupportedSelectors [
-	| oldSelectorDictionary oldSignatures newSignatures deletedSignatures |
-
-	oldSelectorDictionary := Dictionary new.
-	
-	data oldSupportedSelectors do: [ :each |
-		oldSelectorDictionary at: each signature put: each ].
-	
-	oldSignatures := oldSelectorDictionary keys asSet.
-	newSignatures := (data newSupportedSelectors collect: [ :each | each signature ]) asSet.
-	
-	deletedSignatures := oldSignatures difference: newSignatures.
-	
-	^ deletedSignatures asOrderedCollection collect: [ :each |
-		oldSelectorDictionary at: each ]
+	^ data newClasses anySatisfy: [ :each | each name = aClass name ]
 ]
 
 { #category : #'as yet unclassified' }
@@ -90,8 +46,44 @@ DepBreakingChangeDetector >> findActualClass: aClass [
 	^ self class environment at: aClass name asSymbol
 ]
 
-{ #category : #'as yet unclassified' }
-DepBreakingChangeDetector >> instanceSideSelectorsUnderstoodBy: aClass [
-	"Find all instance side selectors that are understood by this class (implemented by it or by its superclasses). aClass must be an actual class in the image"
-	^ aClass allMethods collect: [ :each | each selector ]
+{ #category : #testing }
+DepBreakingChangeDetector >> isMethodUnderstoodInNewVersion: aMethod [
+	
+	| systemClass |
+	systemClass := self findActualClass: aMethod methodClass.
+	
+	^ aMethod isClassSide
+		ifTrue: [ systemClass class canUnderstand: aMethod selector ]
+		ifFalse: [ systemClass canUnderstand: aMethod selector ].
+]
+
+{ #category : #testing }
+DepBreakingChangeDetector >> missingClasses [
+
+	^ data oldClasses reject: [ :aClass |
+		self doesClassExistInNewVersion: aClass ]
+]
+
+{ #category : #testing }
+DepBreakingChangeDetector >> missingMethods [
+
+	| methodsFromMissingClasses |
+	
+	methodsFromMissingClasses :=  self missingClasses
+		flatCollect: [ :aClass | aClass methods ].
+		
+	^ self missingMethodsFromExistingClasses, methodsFromMissingClasses
+]
+
+{ #category : #testing }
+DepBreakingChangeDetector >> missingMethodsFromExistingClasses [
+
+	| classes |
+	
+	classes := data oldClasses select: [ :aClass |
+		self doesClassExistInNewVersion: aClass ].
+	
+	^ classes flatCollect: [ :aClass |
+		aClass methods reject: [ :method |
+			self isMethodUnderstoodInNewVersion: method ] ].
 ]

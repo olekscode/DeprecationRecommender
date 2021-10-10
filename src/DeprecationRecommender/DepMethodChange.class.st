@@ -44,10 +44,10 @@ DepMethodChange >> asItemset [
 	| addedCalls removedCalls |
 	
 	addedCalls := self addedMethodCalls collect: [ :each |
-		DepMethodCall newAdded: each selector ].
+		DepMethodCall newAdded: each ].
 		
 	removedCalls := self removedMethodCalls collect: [ :each |
-		DepMethodCall newRemoved: each selector ].
+		DepMethodCall newRemoved: each ].
 		
 	^ addedCalls asSet union: removedCalls asSet
 ]
