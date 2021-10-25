@@ -2,7 +2,8 @@ Class {
 	#name : #DepBreakingChangeDetector,
 	#superclass : #Object,
 	#instVars : [
-		'data'
+		'data',
+		'unloadedClasses'
 	],
 	#category : #'DeprecationRecommender-Controllers'
 }
@@ -46,11 +47,21 @@ DepBreakingChangeDetector >> findActualClass: aClass [
 	^ self class environment at: aClass name asSymbol
 ]
 
+{ #category : #initialization }
+DepBreakingChangeDetector >> initialize [
+
+	super initialize.
+	unloadedClasses := OrderedCollection new.
+]
+
 { #category : #testing }
 DepBreakingChangeDetector >> isMethodUnderstoodInNewVersion: aMethod [
 	
 	| systemClass |
-	systemClass := self findActualClass: aMethod methodClass.
+	
+	systemClass := [ self findActualClass: aMethod methodClass ] onErrorDo: [
+		unloadedClasses add: aMethod methodClass.
+		^ true ].
 	
 	^ aMethod isClassSide
 		ifTrue: [ systemClass class canUnderstand: aMethod selector ]
