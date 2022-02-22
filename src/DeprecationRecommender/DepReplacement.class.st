@@ -10,6 +10,23 @@ Class {
 	#category : #'DeprecationRecommender-Models'
 }
 
+{ #category : #'instance creation' }
+DepReplacement class >> fromJsonDictionary: aDictionary [
+	| methodCallReplacement |
+	
+	methodCallReplacement := (aDictionary at: 'frequentMethodCallReplacement')
+		ifNil: [ nil ]
+		ifNotNil: [ :dict | DepMethodCallReplacement fromJsonDictionary: dict ].
+
+	^ self new
+		oldMethod: (ClioMethod fromJsonDictionary: (aDictionary at: 'oldMethod'));
+		newMethods: ((aDictionary at: 'newMethods') collect: [ :each | (ClioMethod fromJsonDictionary: each) ]) asOrderedCollection;
+		refactorings: ((aDictionary at: 'refactorings') collect: [ :each | DepRefactoringChain fromJsonArray: each]) asOrderedCollection;
+		frequentMethodCallReplacement: methodCallReplacement;
+		yourself.
+
+]
+
 { #category : #converting }
 DepReplacement >> asJsonDictionary [
 

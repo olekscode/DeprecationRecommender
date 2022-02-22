@@ -15,7 +15,7 @@ DepRecommendation class >> fromJsonDictionary: aDictionary [
 	^ self new
 		method: (ClioMethod fromJsonDictionary: (aDictionary at: 'method'));
 		replacements: ((aDictionary at: 'replacements') collect: [ :each |
-			ClioMethod fromJsonDictionary: each ]) asOrderedCollection;
+			DepReplacement fromJsonDictionary: each ]) asOrderedCollection;
 		blamedCommit: (aDictionary at: 'blamedCommitId');
 		yourself.
 ]
