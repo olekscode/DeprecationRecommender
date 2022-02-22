@@ -58,8 +58,8 @@ DepMethodChange >> asJsonDictionary [
 	^ { 
 		'signature' -> signature .
 		'commitId' -> commitId .
-		'removedMethodCalls' -> (removedMethodCalls collect: [ :each | each asJsonDictionary ]) asArray .
-		'addedMethodCalls' -> (addedMethodCalls collect: [ :each | each asJsonDictionary ]) asArray .
+		'removedMethodCalls' -> removedMethodCalls asArray .
+		'addedMethodCalls' -> addedMethodCalls asArray .
 	} asDictionary
 ]
 

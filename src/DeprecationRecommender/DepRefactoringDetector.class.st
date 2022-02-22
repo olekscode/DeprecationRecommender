@@ -35,7 +35,7 @@ DepRefactoringDetector >> candidateReplacementsFor: aMethod in: aCollectionOfCom
 	candidateReplacements do: [ :replacement |
 		replacement similarity: (
 			metric
-				similarityBetween: replacement method tokens
+				distanceBetween: replacement method tokens
 				and: aMethod tokens) ].
 	
 	^ candidateReplacements select: [ :replacement |
