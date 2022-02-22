@@ -54,6 +54,12 @@ DepRecommendation >> method: anObject [
 	method := anObject
 ]
 
+{ #category : #printing }
+DepRecommendation >> printOn: aStream [
+
+	aStream nextPutAll: method signature
+]
+
 { #category : #accessing }
 DepRecommendation >> replacements [
 
