@@ -26,8 +26,8 @@ BaselineOfDeprecationRecommender >> baseline: spec [
 			with: [ spec repository: 'github://pharo-ai/edit-distances/src' ].
 			
 		spec
-			baseline: 'APriori'
-			with: [ spec repository: 'github://pharo-ai/APriori/src' ].
+			baseline: 'AIAPriori'
+			with: [ spec repository: 'github://pharo-ai/a-priori/src' ].
 		
 		"Packages"
 		spec 
